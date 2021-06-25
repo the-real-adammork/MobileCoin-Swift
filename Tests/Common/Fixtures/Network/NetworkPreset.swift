@@ -28,6 +28,9 @@ enum NetworkPreset {
     /// Latest internal master
     case master
 
+    /// same as mobiledev/alpha, but uses attestation configuration from MainNet
+    case buildtest
+    
     // Ops dev networks
     case build
     case demo
@@ -45,6 +48,7 @@ extension NetworkPreset {
         case mobiledev
         case master
         case build
+        case buildtest
         case demo
         case diogenes
         case drakeley
@@ -66,6 +70,8 @@ extension NetworkPreset {
             return .master
         case .build:
             return .build
+        case .buildtest:
+            return .buildtest
         case .demo:
             return .demo
         case .diogenes:
@@ -82,6 +88,7 @@ extension NetworkPreset {
     private enum NetworkGroup {
         case mainNet
         case testNet
+        case buildtest
         case devNetwork
     }
 
@@ -91,6 +98,8 @@ extension NetworkPreset {
             return .mainNet
         case .testNet:
             return .testNet
+        case .buildtest:
+            return .buildtest
 
         case .alpha, .mobiledev, .master, .build, .demo, .diogenes, .drakeley, .eran:
             return .devNetwork
@@ -106,7 +115,9 @@ extension NetworkPreset {
             return "mc://node1.prod.mobilecoinww.com"
         case .testNet:
             return "mc://node1.test.mobilecoin.com"
-
+        case .buildtest:
+            return "mc://node1.buildtest.mobilecoin.com"
+            
         case .alpha, .mobiledev, .master, .build, .demo, .diogenes, .drakeley, .eran:
             return "mc://consensus.\(self).mobilecoin.com"
         }
@@ -117,6 +128,8 @@ extension NetworkPreset {
             return "fog://fog.prod.mobilecoinww.com"
         case .testNet:
             return "fog://fog.test.mobilecoin.com"
+        case .buildtest:
+            return "fog://fog.buildtest.mobilecoin.com"
 
         case .alpha, .mobiledev, .master, .build, .demo, .diogenes, .drakeley, .eran:
             return "fog://fog.\(self).mobilecoin.com"
@@ -141,8 +154,17 @@ extension NetworkPreset {
     private static let testNetFogReportMrEnclaveHex =
         "185875464ccd67a879d58181055383505a719b364b12d56d9bef90a40bed07ca"
 
+    private static let buildTestNetConsensusMrEnclaveHex =
+        "653228afd2b02a6c28f1dc3b108b1dfa457d170b32ae8ec2978f941bd1655c83"
+    private static let buildTestNetFogViewMrEnclaveHex =
+        "dd84abda7f05116e21fcd1ee6361b0ec29445fff0472131eaf37bf06255b567a"
+    private static let buildTestNetFogLedgerMrEnclaveHex =
+        "89db0d1684fcc98258295c39f4ab68f7de5917ef30f0004d9a86f29930cebbbd"
+    private static let buildTestNetFogReportMrEnclaveHex =
+        "f3f7e9a674c55fb2af543513527b6a7872de305bac171783f6716a0bf6919499"
+
     private static let devMrSignerHex =
-        "7ee5e29d74623fdbc6fbf1454be6f3bb0b86c12366b7b478ad13353e44de8411"
+        "2c1a561c4ab64cbc04bfa445cdf7bed9b2ad6f6b04d38d3137f3622b29fdb30e"
 
     private static let mainNetFogAuthoritySpkiB64Encoded = """
         MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAyr/99fvxi104MLgDgvWPVt01TuTJ+rN4qcNBUbF5i3EMM5z\
@@ -165,6 +187,21 @@ extension NetworkPreset {
         pp2/aQEq3xrRSETxsixUIjsZyWWROkuA0IFnc8d7AmcnUBvRW7FT/5thWyk5agdYUGZ+7C1o69ihR1YxmoGh69fLMPI\
         EOhYh572+3ckgl2SaV4uo9Gvkz8MMGRBcMIMlRirSwhCfozV2RyT5Wn1NgPpyc8zJL7QdOhL7Qxb+5WjnCVrQYHI2cC\
         AwEAAQ==
+        """
+
+    private static let buildTestNetFogAuthoritySpkiB64Encoded = """
+        MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEA1wajhZwQABksBl59g/h4\
+        X2VOMTGuJXmErfFiUCxcRH0eO8uPpC4XHUlmk9QUBoif1DiBnEaThhnaYp0IB5Zi\
+        bOqBv5PdMoQV3IGVe1lCS30rmCkwXXJdwGEO+C8ZcOKvwxq0vmWQEmSAp8fIv2aG\
+        9ajIq4cm8J0qQCdfzXXqElYaTZTmwIaZ9xSlT3PaylOHXrZh0G7t/jswAfqEFrQX\
+        J0vBCqhoPPrJIG4/fZ6tgUaF+I2VT7SpsODdpcqXL1kxlClHi70zrjmC2fwNjQ8b\
+        FPzJ5iZy3du3j0AE84ClDv7mbcFE0F2I+BaACQeYzX6Kql58wx33hxOpAn+ROqNb\
+        mzdTHyzJAqCyCWHmG+JlZMaDBrokuAT+5nx8q270J+mp5StZ1u4gCZ7gMPFRIFBH\
+        EC/FXLh88ZXCUZhLVM0MV/CzAXycEsHKmmZ6JXwUiaJN8pgGCX60Shfaa/uWlST6\
+        LnUv/LUu5o9Jlg9H/29O8mTB3pWcw2KECqjmpxub3FoUF+QCfcDJPyDxQk8CJCXs\
+        ecd1zl6mjnJRwrMeL6tonlRpePIj64MmrH957gY4AdbSyj75i6Agkrb6Yy4e+35W\
+        FmHObvYgo6htCFZ90czBML4yLVI9ne31VcGVmu0QGcwC1OLxdJ1jQ2k0Y4b8b6hk\
+        RLzqf27ipPaPJTSVjEljAwUCAwEAAQ==
         """
 
     private static let alphaFogAuthoritySpkiB64Encoded = """
@@ -333,6 +370,9 @@ extension NetworkPreset {
             fogAuthoritySpkiB64Encoded = Self.mainNetFogAuthoritySpkiB64Encoded
         case .testNet:
             fogAuthoritySpkiB64Encoded = Self.testNetFogAuthoritySpkiB64Encoded
+            
+        case .buildtest:
+            fogAuthoritySpkiB64Encoded = Self.buildTestNetFogAuthoritySpkiB64Encoded
 
         case .alpha:
             fogAuthoritySpkiB64Encoded = Self.alphaFogAuthoritySpkiB64Encoded
@@ -369,7 +409,9 @@ extension NetworkPreset {
             return try defaultAttestation(mrEnclaveHex: Self.mainNetConsensusMrEnclaveHex)
         case .testNet:
             return try defaultAttestation(mrEnclaveHex: Self.testNetConsensusMrEnclaveHex)
-        case .devNetwork:
+//        case .buildtest:
+//            return try defaultAttestation(mrEnclaveHex: Self.buildTestNetConsensusMrEnclaveHex)
+        case .devNetwork, .buildtest:
             return try XCTUnwrapSuccess(Attestation.make(
                 mrSigner: try XCTUnwrap(Data(hexEncoded: Self.devMrSignerHex)),
                 productId: McConstants.CONSENSUS_PRODUCT_ID,
@@ -383,7 +425,9 @@ extension NetworkPreset {
             return try defaultAttestation(mrEnclaveHex: Self.mainNetFogViewMrEnclaveHex)
         case .testNet:
             return try defaultAttestation(mrEnclaveHex: Self.testNetFogViewMrEnclaveHex)
-        case .devNetwork:
+//        case .buildtest:
+//            return try defaultAttestation(mrEnclaveHex: Self.buildTestNetFogViewMrEnclaveHex)
+        case .devNetwork, .buildtest:
             return try XCTUnwrapSuccess(Attestation.make(
                 mrSigner: try XCTUnwrap(Data(hexEncoded: Self.devMrSignerHex)),
                 productId: McConstants.FOG_VIEW_PRODUCT_ID,
@@ -397,7 +441,9 @@ extension NetworkPreset {
             return try defaultAttestation(mrEnclaveHex: Self.mainNetFogLedgerMrEnclaveHex)
         case .testNet:
             return try defaultAttestation(mrEnclaveHex: Self.testNetFogLedgerMrEnclaveHex)
-        case .devNetwork:
+//        case .buildtest:
+//            return try defaultAttestation(mrEnclaveHex: Self.buildTestNetFogLedgerMrEnclaveHex)
+        case .devNetwork, .buildtest:
             return try XCTUnwrapSuccess(Attestation.make(
                 mrSigner: try XCTUnwrap(Data(hexEncoded: Self.devMrSignerHex)),
                 productId: McConstants.FOG_LEDGER_PRODUCT_ID,
@@ -411,7 +457,9 @@ extension NetworkPreset {
             return try defaultAttestation(mrEnclaveHex: Self.mainNetFogReportMrEnclaveHex)
         case .testNet:
             return try defaultAttestation(mrEnclaveHex: Self.testNetFogReportMrEnclaveHex)
-        case .devNetwork:
+//        case .buildtest:
+//            return try defaultAttestation(mrEnclaveHex: Self.buildTestNetFogReportMrEnclaveHex)
+        case .devNetwork, .buildtest:
             return try XCTUnwrapSuccess(Attestation.make(
                 mrSigner: try XCTUnwrap(Data(hexEncoded: Self.devMrSignerHex)),
                 productId: McConstants.FOG_REPORT_PRODUCT_ID,
@@ -442,7 +490,7 @@ extension NetworkPreset {
         switch self {
         case .mainNet, .testNet:
             return false
-        case .alpha, .mobiledev, .master, .build, .demo, .diogenes, .drakeley, .eran:
+        case .alpha, .mobiledev, .master, .build, .buildtest, .demo, .diogenes, .drakeley, .eran:
             return true
         }
     }
@@ -451,7 +499,7 @@ extension NetworkPreset {
         case .mainNet, .testNet:
             // No credentials necessary.
             return nil
-        case .alpha, .mobiledev, .master, .build, .demo, .diogenes, .drakeley, .eran:
+        case .alpha, .mobiledev, .master, .build, .buildtest, .demo, .diogenes, .drakeley, .eran:
             return BasicCredentials(username: Self.devAuthUsername, password: Self.devAuthPassword)
         }
     }
@@ -460,7 +508,7 @@ extension NetworkPreset {
         switch self {
         case .mainNet, .testNet:
             return false
-        case .alpha, .mobiledev, .master, .build, .demo, .diogenes, .drakeley, .eran:
+        case .alpha, .mobiledev, .master, .build, .buildtest, .demo, .diogenes, .drakeley, .eran:
             return true
         }
     }
@@ -469,7 +517,7 @@ extension NetworkPreset {
         case .mainNet, .testNet:
             // No credentials necessary.
             return nil
-        case .alpha, .mobiledev, .master, .build, .demo, .diogenes, .drakeley, .eran:
+        case .alpha, .mobiledev, .master, .build, .buildtest, .demo, .diogenes, .drakeley, .eran:
             return BasicCredentials(username: Self.devAuthUsername, password: Self.devAuthPassword)
         }
     }
@@ -479,8 +527,8 @@ extension NetworkPreset {
     }
 
 #if canImport(Keys)
-    private static let devAuthUsername = MobileCoinKeys().devNetworkAuthUsername
-    private static let devAuthPassword = MobileCoinKeys().devNetworkAuthPassword
+    private static let devAuthUsername = "amork"// MobileCoinKeys().devNetworkAuthUsername
+    private static let devAuthPassword = "amork:1624559655:34ff9c655974a9720d13" // MobileCoinKeys().devNetworkAuthPassword
 #else
     private static let devAuthUsername = ""
     private static let devAuthPassword = ""
@@ -495,14 +543,13 @@ extension NetworkPreset {
             return Self.testNetTestAccountMnemonicsCommaSeparated
                 .split(separator: ",").map { String($0) }
 
-        case .alpha, .mobiledev, .master, .build, .demo, .diogenes, .drakeley, .eran:
+        case .alpha, .mobiledev, .master, .build, .buildtest, .demo, .diogenes, .drakeley, .eran:
             return []
         }
     }
 
 #if canImport(Keys)
-    private static let testNetTestAccountMnemonicsCommaSeparated =
-        MobileCoinKeys().testNetTestAccountMnemonicsCommaSeparated
+    private static let testNetTestAccountMnemonicsCommaSeparated = ""//MobileCoinKeys().testNetTestAccountMnemonicsCommaSeparated
 #else
     private static let testNetTestAccountMnemonicsCommaSeparated = ""
 #endif
@@ -526,7 +573,7 @@ extension NetworkPreset {
         case .testNet:
             return []
 
-        case .alpha, .mobiledev, .master, .build, .demo, .diogenes, .drakeley, .eran:
+        case .alpha, .mobiledev, .master, .build, .buildtest, .demo, .diogenes, .drakeley, .eran:
             return Self.devNetworkTestAccountPrivateKeysHex
         }
     }

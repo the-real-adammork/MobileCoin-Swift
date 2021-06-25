@@ -2,13 +2,59 @@
 //  Copyright (c) 2020-2021 MobileCoin. All rights reserved.
 //
 
-// swiftlint:disable multiline_arguments
+// swiftlint:disable all
 
 @testable import MobileCoin
 import XCTest
 
 class MobileCoinClientIntTests: XCTestCase {
 
+    func testAccountBalancePrinting() throws {
+        let accountCount = IntegrationTestFixtures.network.testAccountsPrivateKeys.count
+        let publicAddresses = try Array(0...(accountCount-1)).map { (index) -> String in
+            let publicAddress = try IntegrationTestFixtures.createPublicAddress(accountIndex: index)
+            let b58 = Base58Coder.encode(publicAddress)
+            print("Account # \(index) b58: \n\n \(b58) \n\n")
+            return b58
+        }
+    }
+    
+    func testAccountBalanceSetup() throws {
+        let accountCount = IntegrationTestFixtures.network.testAccountsPrivateKeys.count
+        let client = try IntegrationTestFixtures.createMobileCoinClient(accountIndex: 0)
+        
+        print("balance \(client.balance.amountPicoMob()!)")
+        
+        guard client.balance.amountMobParts.mobInt > 10 else { return }
+        guard accountCount > 1 else { return }
+        guard let amountPicoMob = client.balance.amountPicoMob() else { return }
+        
+        let shareableAmount = UInt64(10).multipliedReportingOverflow(by:UInt64(1_000_000_000_000))
+        let fractionForEachAccount = shareableAmount.partialValue.dividedReportingOverflow(by: UInt64(accountCount)).partialValue
+        
+        let publicAddresses = try Array(1...(accountCount-1)).map { (index) -> PublicAddress in
+            try IntegrationTestFixtures.createPublicAddress(accountIndex: index)
+        }
+        
+        let expect = expectation(description: "Preparing transaction")
+        guard let first = publicAddresses.first else { return }
+        client.prepareTransaction(
+            to: first,
+            amount: fractionForEachAccount,
+            fee: IntegrationTestFixtures.fee
+        ) {
+            guard let (transaction, _) = $0.successOrFulfill(expectation: expect)
+            else { return }
+
+            client.submitTransaction(transaction) {
+                guard $0.successOrFulfill(expectation: expect) != nil else { return }
+
+                print("Transaction submission successful")
+                expect.fulfill()
+            }
+        }
+    }
+    
     func testTransactionDoubleSubmissionFails() throws {
         let recipient = try IntegrationTestFixtures.createPublicAddress(accountIndex: 1)
 

@@ -1,6 +1,7 @@
 //
 //  Copyright (c) 2020-2021 MobileCoin. All rights reserved.
 //
+// swiftlint:disable line_length
 
 import Foundation
 
@@ -124,6 +125,14 @@ extension McConstants {
         191, 127, 169, 87, 166, 169, 74, 203, 88, 136, 81, 188, 135, 103, 224, 202, 87, 112, 108,
         121, 244, 252, 42, 166, 188, 185, 147, 1, 44, 60, 56, 108,
     ])
+    static let BUILDTESTNET_CONSENSUS_MRSIGNER_HEX =
+        "2c1a561c4ab64cbc04bfa445cdf7bed9b2ad6f6b04d38d3137f3622b29fdb30e"
+    static let BUILDTESTNET_CONSENSUS_MRSIGNER = Data([
+        44, 26, 86, 28, 74, 182, 76, 188, 4, 191, 164, 69, 205, 247, 190, 217, 178, 173, 111, 107,
+        4, 211, 141, 49, 55, 243, 98, 43, 41, 253, 179, 14
+    ])
+    
+
 
     static let FOG_VIEW_SECURITY_VERSION: UInt16 = 1
     static let FOG_LEDGER_SECURITY_VERSION: UInt16 = 1
@@ -139,6 +148,12 @@ extension McConstants {
         191, 127, 169, 87, 166, 169, 74, 203, 88, 136, 81, 188, 135, 103, 224, 202, 87, 112, 108,
         121, 244, 252, 42, 166, 188, 185, 147, 1, 44, 60, 56, 108,
     ])
+    static let BUILDTESTNET_FOG_MRSIGNER_HEX =
+        "2c1a561c4ab64cbc04bfa445cdf7bed9b2ad6f6b04d38d3137f3622b29fdb30e"
+    static let BUILDTESTNET_FOG_MRSIGNER = Data([
+        44, 26, 86, 28, 74, 182, 76, 188, 4, 191, 164, 69, 205, 247, 190, 217, 178, 173, 111, 107,
+        4, 211, 141, 49, 55, 243, 98, 43, 41, 253, 179, 14
+    ])
 
     static let FOG_REPORT_SECURITY_VERSION: UInt16 = 1
     static let DEV_FOG_REPORT_MRSIGNER_HEX =
@@ -153,9 +168,27 @@ extension McConstants {
         191, 127, 169, 87, 166, 169, 74, 203, 88, 136, 81, 188, 135, 103, 224, 202, 87, 112, 108,
         121, 244, 252, 42, 166, 188, 185, 147, 1, 44, 60, 56, 108,
     ])
+    static let BUILDTESTNET_FOG_REPORT_MRSIGNER_HEX =
+        "2c1a561c4ab64cbc04bfa445cdf7bed9b2ad6f6b04d38d3137f3622b29fdb30e"
+    static let BUILDTESTNET_FOG_REPORT_MRSIGNER = Data([
+        44, 26, 86, 28, 74, 182, 76, 188, 4, 191, 164, 69, 205, 247, 190, 217, 178, 173, 111, 107,
+        4, 211, 141, 49, 55, 243, 98, 43, 41, 253, 179, 14
+    ])
 
 }
 
+extension StringProtocol {
+    var hexaData: Data { .init(hexa) }
+    var hexaBytes: [UInt8] { .init(hexa) }
+    private var hexa: UnfoldSequence<UInt8, Index> {
+        sequence(state: startIndex) { startIndex in
+            guard startIndex < self.endIndex else { return nil }
+            let endIndex = self.index(startIndex, offsetBy: 2, limitedBy: self.endIndex) ?? self.endIndex
+            defer { startIndex = endIndex }
+            return UInt8(self[startIndex..<endIndex], radix: 16)
+        }
+    }
+}
 // MARK: - Url
 
 extension McConstants {
