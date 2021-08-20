@@ -1,6 +1,5 @@
 PODS:
   - _NIODataStructures (2.32.0)
-  - CGRPCZlib (1.0.0)
   - CNIOAtomics (2.32.0)
   - CNIOBoringSSL (2.14.1)
   - CNIOBoringSSLShims (2.14.1):
@@ -9,15 +8,6 @@ PODS:
   - CNIOHTTPParser (2.32.0)
   - CNIOLinux (2.32.0)
   - CNIOWindows (2.32.0)
-  - gRPC-Swift (1.0.0):
-    - CGRPCZlib (= 1.0.0)
-    - Logging (< 2.0.0, >= 1.4.0)
-    - SwiftNIO (< 3.0.0, >= 2.22.0)
-    - SwiftNIOExtras (< 2.0.0, >= 1.4.0)
-    - SwiftNIOHTTP2 (< 2.0.0, >= 1.16.1)
-    - SwiftNIOSSL (< 3.0.0, >= 2.8.0)
-    - SwiftNIOTransportServices (< 2.0.0, >= 1.6.0)
-    - SwiftProtobuf (< 2.0.0, >= 1.9.0)
   - Keys (1.0.1)
   - LibMobileCoin (1.1.2):
     - gRPC-Swift (~> 1.0.0)
@@ -132,7 +122,6 @@ DEPENDENCIES:
 SPEC REPOS:
   trunk:
     - _NIODataStructures
-    - CGRPCZlib
     - CNIOAtomics
     - CNIOBoringSSL
     - CNIOBoringSSLShims
@@ -168,12 +157,11 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   LibMobileCoin:
-    :commit: 1a5c12221abc88ed5c1772e1829b7b89caa4d6a0
+    :commit: 3f27bee245d151943d75c6c338fb613029c43853
     :git: https://github.com/the-real-adammork/libmobilecoin-ios-artifacts.git
 
 SPEC CHECKSUMS:
   _NIODataStructures: e63beb6bfebffbd4399e514b7ecaf3f96cd8671c
-  CGRPCZlib: b0c9d704a12fa667f1824ffff20688f191945989
   CNIOAtomics: 9a2bb6949fab36db580f9973e36813bf0744cace
   CNIOBoringSSL: fbf8a722a81aa837c9cfae06da6b532f5eff7097
   CNIOBoringSSLShims: ad7c2c665a5426b29526a11af1b084764fef80d4
@@ -183,9 +171,9 @@ SPEC CHECKSUMS:
   CNIOWindows: 310f73e804e6333a63e921b61892dbbaf61bd0cc
   gRPC-Swift: 77154009a019e97f8c4bd8f2bb75fe9726801157
   Keys: a576f4c9c1c641ca913a959a9c62ed3f215a8de9
-  LibMobileCoin: f9edb1786526e8c74b2783ea0fe2c3f7939ae28e
+  LibMobileCoin: e39eb11c5e39641232214c8e711d55d2076dd035
   Logging: beeb016c9c80cf77042d62e83495816847ef108b
-  MobileCoin: 9fbaf2d6ea75e3863503a390fd8fb0d429aa71e4
+  MobileCoin: 64363a5773f88e59dc5260776ca751ebcba58e5b
   SwiftLint: 99f82d07b837b942dd563c668de129a03fc3fb52
   SwiftNIO: 75035e9e47345716eb6f01effaa4e14b9564ae4a
   SwiftNIOConcurrencyHelpers: cdc0919908b59ae643e6924f57030dacdea0499d

@@ -30,7 +30,7 @@ Pod::Spec.new do |s|
 
     subspec.dependency "LibMobileCoin", "~> 1.1.2"
 
-    subspec.dependency "gRPC-Swift", "~> 1.0"
+    subspec.dependency "gRPC-Swift", "~> 1.39"
     subspec.dependency "Logging", "~> 1.4"
     subspec.dependency "SwiftNIO", "~> 2.22"
     subspec.dependency "SwiftNIOHPACK", "~> 1.16"
@@ -79,7 +79,7 @@ Pod::Spec.new do |s|
     # The LibMobileCoin vendored binary doesn't include support for 32-bit
     # architectures or for arm64 iphonesimulator.
     "VALID_ARCHS[sdk=iphoneos*]" => "arm64",
-    "VALID_ARCHS[sdk=iphonesimulator*]" => "x86_64 arm64",
+    "VALID_ARCHS[sdk=iphonesimulator*]" => "x86_64 arm6",
   }
 
   unless ENV["MC_ENABLE_WARN_LONG_COMPILE_TIMES"].nil?
