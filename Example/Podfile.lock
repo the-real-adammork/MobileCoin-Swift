@@ -168,7 +168,7 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   LibMobileCoin:
-    :commit: 665e83f1aae68c6f95316682f035182e2344d6cb
+    :commit: ebadeaf21852004f1a82bed1e2b4c157b4aa304b
     :git: https://github.com/the-real-adammork/libmobilecoin-ios-artifacts.git
 
 SPEC CHECKSUMS:
