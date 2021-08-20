@@ -80,6 +80,7 @@ Pod::Spec.new do |s|
     # architectures or for arm64 iphonesimulator.
     "VALID_ARCHS[sdk=iphoneos*]" => "arm64",
     "VALID_ARCHS[sdk=iphonesimulator*]" => "x86_64 arm64",
+    "EXCLUDED_ARCHS[sdk=iphonesimulator*]" => 'i386'
     "ONLY_ACTIVE_ARCH" => "YES",
   }
 
