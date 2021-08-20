@@ -32,7 +32,7 @@ target 'Example' do
   pod 'LibMobileCoin', git: 'https://github.com/the-real-adammork/libmobilecoin-ios-artifacts.git'
 
   pod 'gRPC-Swift'
-  pod 'SwiftProtobuf', binary: true
+  pod 'SwiftProtobuf'
   pod 'SwiftLint', binary: true
 end
 
