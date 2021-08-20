@@ -168,7 +168,7 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   LibMobileCoin:
-    :commit: 292328cb4916af89ed90dccf8e2ace63718253dc
+    :commit: 05f33703f24bccb982096b44e9e05228593d1693
     :git: https://github.com/the-real-adammork/libmobilecoin-ios-artifacts.git
 
 SPEC CHECKSUMS:
@@ -202,6 +202,6 @@ SPEC CHECKSUMS:
   SwiftNIOTransportServices: a10d05256d0c37566266896d0b14b6725c0ee60e
   SwiftProtobuf: 9c85136c6ba74b0a1b84279dbf0f6db8efb714e0
 
-PODFILE CHECKSUM: 1f7bfef21da8e549ae8bf9c1d9c69c01ada48450
+PODFILE CHECKSUM: 6d2ede1b0ae9290fc1ed52ea46fcda6f437b79e0
 
 COCOAPODS: 1.9.3
