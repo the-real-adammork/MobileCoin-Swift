@@ -80,6 +80,7 @@ Pod::Spec.new do |s|
     # architectures or for arm64 iphonesimulator.
     "VALID_ARCHS[sdk=iphoneos*]" => "arm64",
     "VALID_ARCHS[sdk=iphonesimulator*]" => "x86_64 arm64",
+    "ONLY_ACTIVE_ARCH" => "YES",
   }
 
   unless ENV["MC_ENABLE_WARN_LONG_COMPILE_TIMES"].nil?
