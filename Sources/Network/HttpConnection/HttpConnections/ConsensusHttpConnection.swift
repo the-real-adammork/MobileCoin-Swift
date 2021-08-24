@@ -10,6 +10,7 @@ final class ConsensusHttpConnection: ConnectionProtocol, ConsensusService {
         _ tx: External_Tx,
         completion: @escaping (Result<ConsensusCommon_ProposeTxResponse, ConnectionError>) -> Void
     ) {
+        
     }
     
     func setAuthorization(credentials: BasicCredentials) {

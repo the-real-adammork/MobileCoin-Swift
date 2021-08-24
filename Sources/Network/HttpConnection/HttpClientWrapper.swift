@@ -5,6 +5,8 @@
 // swiftlint:disable multiline_parameters_brackets
 
 import Foundation
+import LibMobileCoin
+import GRPC
 
 final class HttpClientWrapper: AttestableHttpClient {
     
@@ -12,9 +14,11 @@ final class HttpClientWrapper: AttestableHttpClient {
     private let headers: [String: String]
     private let config: ConnectionConfigProtocol
     private let httpMethod = HTTPMethod.post
-    var authCallable: AuthHttpCallable { get {
-        AuthHttpCallable
-    } }
+    var authCallable: AuthHttpCallable {
+        get {
+            TestAuthCallable()
+        }
+    }
     
     required init(config: ConnectionConfigProtocol, httpRequester: HttpRequester?) {
         self.httpRequester = httpRequester
@@ -42,5 +46,11 @@ final class HttpClientWrapper: AttestableHttpClient {
             return completion(
                 .failure(InvalidInputError("HttpRequester was not set in the Network config")))
         }
+    }
+}
+
+public struct TestAuthCallable : AuthHttpCallable {
+    func auth(_ request: Attest_AuthMessage, callOptions: CallOptions?, completion: @escaping (HttpCallResult<Attest_AuthMessage>) -> Void) {
+        print("Implement")
     }
 }

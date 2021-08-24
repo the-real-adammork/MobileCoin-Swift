@@ -8,6 +8,8 @@
 import Foundation
 import GRPC
 import LibMobileCoin
+import NIO
+import NIOHPACK
 
 enum AttestedHttpConnectionError: Error {
     case connectionError(ConnectionError)
@@ -332,20 +334,23 @@ extension AttestedHttpConnection {
             -> Result<Response, AttestedHttpConnectionError>
         {
             // Basic credential authorization failure
-            guard callResult.httpResponse.statusCode != 401 else {
+            guard callResult.status.isOk else {
                 return .failure(.connectionError(.authorizationFailure("url: \(url)")))
             }
 
             // Attestation failure, reattest
-            guard callResult.httpResponse.statusCode != 403 else {
+            guard callResult.status.code != 403 else {
                 return .failure(.attestationFailure())
             }
 
-            guard callResult.httpResponse.statusCode == 200, let response = callResult.responsePayload else {
+            guard callResult.status.code == 200, let response = callResult.response else {
                 return .failure(.connectionError(
-                                    .connectionFailure("url: \(url), status: \(callResult.httpResponse.statusCode)")))
+                                    .connectionFailure("url: \(url), status: \(callResult.status.code)")))
             }
-            session.processResponse(headers: HPACKHeaders(callResult.headers))
+            
+            if let initialMetadata = callResult.initialMetadata {
+                session.processResponse(headers: initialMetadata)
+            }
 
             return .success(response)
         }

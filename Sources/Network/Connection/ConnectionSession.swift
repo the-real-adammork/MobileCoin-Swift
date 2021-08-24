@@ -36,7 +36,12 @@ final class ConnectionSession {
         addCookieHeader(to: &hpackHeaders)
     }
 
-    func processResponse(headers: HPACKHeaders) {
+    func addRequestHeaders(to urlRequest: inout URLRequest) {
+        addAuthorizationHeader(to: &urlRequest)
+        addCookieHeader(to: &urlRequest)
+    }
+
+    func processResponse(headers: [AnyHashable : Any]) {
         processCookieHeader(headers: headers)
     }
 }
@@ -47,12 +52,21 @@ extension ConnectionSession {
             hpackHeaders.add(httpHeaders: ["Authorization": credentials.authorizationHeaderValue])
         }
     }
+    
+    private func addAuthorizationHeader(to urlRequest: inout URLRequest) {
+        if let credentials = authorizationCredentials {
+            urlRequest.setValue(credentials.authorizationHeaderValue, forHTTPHeaderField: "Authorization")
+        }
+    }
 }
 
+// GRPC
 extension ConnectionSession {
-    private func addCookieHeader(to hpackHeaders: inout HPACKHeaders) {
+    private func addCookieHeader(to urlRequest: inout URLRequest) {
         if let cookies = cookieStorage.cookies(for: url) {
-            hpackHeaders.add(httpHeaders: HTTPCookie.requestHeaderFields(with: cookies))
+            HTTPCookie.requestHeaderFields(with: cookies).forEach { header in
+                urlRequest.setValue(header.value, forHTTPHeaderField: header.key)
+            }
         }
     }
 
@@ -77,3 +91,28 @@ extension HPACKHeaders {
         add(contentsOf: HPACKHeaders(httpHeaders: httpHeaders))
     }
 }
+
+// HTTP
+extension ConnectionSession {
+    private func addCookieHeader(to hpackHeaders: inout HPACKHeaders) {
+        if let cookies = cookieStorage.cookies(for: url) {
+            hpackHeaders.add(httpHeaders: HTTPCookie.requestHeaderFields(with: cookies))
+        }
+    }
+
+    private func processCookieHeader(headers: [AnyHashable: Any]) {
+        let http1Headers = Dictionary(
+            headers.compactMap({ (key: AnyHashable, value: Any) -> (name: String, value: String)? in
+                guard let name = key as? String else { return nil }
+                guard let value = value as? String else { return nil }
+                return (name:name, value:value)
+            }).map { ($0.name.capitalized, $0.value) },
+            uniquingKeysWith: { k, _ in k })
+
+        let receivedCookies = HTTPCookie.cookies(
+            withResponseHeaderFields: http1Headers,
+            for: url)
+        receivedCookies.forEach(cookieStorage.setCookie)
+    }
+}
+

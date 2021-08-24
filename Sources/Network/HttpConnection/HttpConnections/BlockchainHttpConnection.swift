@@ -5,7 +5,9 @@
 import Foundation
 import LibMobileCoin
 
-final class BlockchainHttpConnection: ConnectionProtocol, BlockchainService {
+final class BlockchainHttpConnection: HttpConnection, BlockchainService {
+    private let client: 
+    
     func getLastBlockInfo(
         completion:
             @escaping (Result<ConsensusCommon_LastBlockInfoResponse, ConnectionError>) -> Void
@@ -14,5 +16,42 @@ final class BlockchainHttpConnection: ConnectionProtocol, BlockchainService {
     
     func setAuthorization(credentials: BasicCredentials) {
         
+    }
+}
+
+final class BlockchainHttpConnection: HttpConnection, BlockchainService {
+    private let client: ConsensusCommon_BlockchainAPIClient
+
+    init(
+        config: ConnectionConfig<ConsensusUrl>,
+        channelManager: HttpChannelManager,
+        targetQueue: DispatchQueue?
+    ) {
+        let channel = channelManager.channel(for: config)
+        self.client = ConsensusCommon_BlockchainAPIClient(channel: channel)
+        super.init(config: config, targetQueue: targetQueue)
+    }
+
+    func getLastBlockInfo(
+        completion:
+            @escaping (Result<ConsensusCommon_LastBlockInfoResponse, ConnectionError>) -> Void
+    ) {
+        performCall(GetLastBlockInfoCall(client: client), completion: completion)
+    }
+}
+
+extension BlockchainHttpConnection {
+    private struct GetLastBlockInfoCall: HttpCallable {
+        let client: ConsensusCommon_BlockchainAPIClient
+
+        func call(
+            request: (),
+            callOptions: CallOptions?,
+            completion: @escaping (UnaryCallResult<ConsensusCommon_LastBlockInfoResponse>) -> Void
+        ) {
+            let unaryCall =
+                client.getLastBlockInfo(Google_Protobuf_Empty(), callOptions: callOptions)
+            unaryCall.callResult.whenSuccess(completion)
+        }
     }
 }

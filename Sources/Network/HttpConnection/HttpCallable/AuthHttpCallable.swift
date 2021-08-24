@@ -1,0 +1,26 @@
+//
+//  Copyright (c) 2020-2021 MobileCoin. All rights reserved.
+//
+
+import Foundation
+import GRPC
+import LibMobileCoin
+
+protocol AuthHttpCallable {
+    func auth(
+        _ request: Attest_AuthMessage,
+        callOptions: CallOptions?,
+        completion: @escaping (HttpCallResult<Attest_AuthMessage>) -> Void)
+}
+
+struct AuthHttpCallableWrapper: HttpCallable {
+    let authCallable: AuthHttpCallable
+
+    func call(
+        request: Attest_AuthMessage,
+        callOptions: CallOptions?,
+        completion: @escaping (HttpCallResult<Attest_AuthMessage>) -> Void
+    ) {
+        authCallable.auth(request, callOptions: callOptions, completion: completion)
+    }
+}
