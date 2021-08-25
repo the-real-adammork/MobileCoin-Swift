@@ -32,7 +32,7 @@ final class FogBlockConnection:
                             channelManager: channelManager,
                             targetQueue: targetQueue))
                 case .http:
-                    return .http(httpService: FogBlockHttpConnection())
+                    return .http(httpService: FogBlockHttpConnection(config: config, targetQueue: targetQueue))
                 }
             },
             transportProtocolOption: config.transportProtocolOption,
