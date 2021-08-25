@@ -25,47 +25,47 @@ extension HttpCallResult {
     }
 }
 
-protocol HttpClientCall {
-    /// The type of the request message for the call.
-    associatedtype RequestPayload
-    
-    /// The type of the response message for the call.
-    associatedtype ResponsePayload
-    
-    /// The event loop this call is running on.
-    var eventLoop: NIOCore.EventLoop { get }
-    
-    /// The options used to make the RPC.
-    var options: GRPC.CallOptions { get }
-    
-    /// HTTP/2 stream that requests and responses are sent and received on.
-    var subchannel: NIOCore.EventLoopFuture<NIOCore.Channel> { get }
-    
-    /// Initial response metadata.
-    var initialMetadata: NIOCore.EventLoopFuture<NIOHPACK.HPACKHeaders> { get }
-    
-    /// Status of this call which may be populated by the server or client.
-    ///
-    /// The client may populate the status if, for example, it was not possible to connect to the service.
-    ///
-    /// Note: despite `GRPCStatus` conforming to `Error`, the value will be __always__ delivered as a __success__
-    /// result even if the status represents a __negative__ outcome. This future will __never__ be fulfilled
-    /// with an error.
-    var status: NIOCore.EventLoopFuture<GRPC.GRPCStatus> { get }
-    
-    /// Trailing response metadata.
-    var trailingMetadata: NIOCore.EventLoopFuture<NIOHPACK.HPACKHeaders> { get }
-    
-    /// Cancel the current call.
-    ///
-    /// Closes the HTTP/2 stream once it becomes available. Additional writes to the channel will be ignored.
-    /// Any unfulfilled promises will be failed with a cancelled status (excepting `status` which will be
-    /// succeeded, if not already succeeded).
-    func cancel(promise: NIOCore.EventLoopPromise<Void>?)
-    
-    var response: NIOCore.EventLoopFuture<Self.ResponsePayload> { get }
-}
-
+//protocol HttpClientCall {
+//    /// The type of the request message for the call.
+//    associatedtype RequestPayload
+//
+//    /// The type of the response message for the call.
+//    associatedtype ResponsePayload
+//
+//    /// The event loop this call is running on.
+//    var eventLoop: NIOCore.EventLoop { get }
+//
+//    /// The options used to make the RPC.
+//    var options: GRPC.CallOptions { get }
+//
+//    /// HTTP/2 stream that requests and responses are sent and received on.
+//    var subchannel: NIOCore.EventLoopFuture<NIOCore.Channel> { get }
+//
+//    /// Initial response metadata.
+//    var initialMetadata: NIOCore.EventLoopFuture<NIOHPACK.HPACKHeaders> { get }
+//
+//    /// Status of this call which may be populated by the server or client.
+//    ///
+//    /// The client may populate the status if, for example, it was not possible to connect to the service.
+//    ///
+//    /// Note: despite `GRPCStatus` conforming to `Error`, the value will be __always__ delivered as a __success__
+//    /// result even if the status represents a __negative__ outcome. This future will __never__ be fulfilled
+//    /// with an error.
+//    var status: NIOCore.EventLoopFuture<GRPC.GRPCStatus> { get }
+//
+//    /// Trailing response metadata.
+//    var trailingMetadata: NIOCore.EventLoopFuture<NIOHPACK.HPACKHeaders> { get }
+//
+//    /// Cancel the current call.
+//    ///
+//    /// Closes the HTTP/2 stream once it becomes available. Additional writes to the channel will be ignored.
+//    /// Any unfulfilled promises will be failed with a cancelled status (excepting `status` which will be
+//    /// succeeded, if not already succeeded).
+//    func cancel(promise: NIOCore.EventLoopPromise<Void>?)
+//
+//    var response: NIOCore.EventLoopFuture<Self.ResponsePayload> { get }
+//}
+//
 //struct HttpResponseClientCall : HttpClientCall {
 //    var response: EventLoopFuture<Int>
 //

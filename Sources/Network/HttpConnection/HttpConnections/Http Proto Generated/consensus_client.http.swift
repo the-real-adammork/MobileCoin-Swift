@@ -18,7 +18,7 @@ public protocol ConsensusClient_ConsensusClientAPIRestClientProtocol: HTTPClient
 
 extension ConsensusClient_ConsensusClientAPIRestClientProtocol {
   public var serviceName: String {
-    return "consensus_client.ConsensusClientAPIRest"
+    return "consensus_client.ConsensusClientAPI"
   }
 
   //// This APIRest call is made with an encrypted payload for the enclave,
@@ -33,7 +33,7 @@ extension ConsensusClient_ConsensusClientAPIRestClientProtocol {
     callOptions: HTTPCallOptions? = nil
   ) -> HTTPUnaryCall<Attest_Message, ConsensusCommon_ProposeTxResponse> {
     return self.makeUnaryCall(
-      path: "/consensus_client.ConsensusClientAPIRest/ClientTxPropose",
+      path: "/consensus_client.ConsensusClientAPI/ClientTxPropose",
       request: request,
       callOptions: callOptions ?? self.defaultHTTPCallOptions
     )
