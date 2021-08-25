@@ -25,7 +25,7 @@ final class BlockchainConnection:
 
         super.init(
             connectionOptionWrapperFactory: { transportProtocolOption in
-                switch TransportProtocol.Option.grpc {
+                switch TransportProtocol.Option.http {
                 case .grpc:
                     return .grpc(
                         grpcService: BlockchainGrpcConnection(
