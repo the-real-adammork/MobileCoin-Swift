@@ -74,7 +74,8 @@ extension HttpConnection {
         }
 
         func requestCallOptions() -> HTTPCallOptions {
-            HTTPCallOptions(headers: session.requestHeaders)
+            logger.debug(session.requestHeaders.debugDescription)
+            return HTTPCallOptions(headers: session.requestHeaders)
         }
 
         func processResponse<Response>(callResult: HttpCallResult<Response>)

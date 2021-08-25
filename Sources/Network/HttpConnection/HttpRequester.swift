@@ -90,6 +90,7 @@ extension HTTPRequester : Requester {
         var request = URLRequest(url: url.absoluteURL)
         request.httpMethod = call.method.rawValue
         request.addProtoHeaders()
+        request.addHeaders(call.options?.headers ?? [:])
 
         do {
             request.httpBody = try call.requestPayload?.serializedData() ?? Google_Protobuf_Empty().serializedData()
@@ -143,6 +144,12 @@ fileprivate extension URLRequest {
         
         let accept = HTTPHeadersConstants.ACCEPT_PROTOBUF
         self.addValue(accept.value, forHTTPHeaderField: accept.fieldName)
+    }
+    
+    mutating func addHeaders(_ headers: [String:String]) {
+        headers.forEach { headerFieldName, value in
+            self.setValue(value, forHTTPHeaderField: headerFieldName)
+        }
     }
 }
 

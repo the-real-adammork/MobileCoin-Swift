@@ -10,6 +10,7 @@ struct BasicCredentials {
 
     var authorizationHeaderValue: String {
         let credentials = "\(username):\(password)"
+        logger.debug(credentials)
         return "Basic \(Data(credentials.utf8).base64EncodedString())"
     }
 }
