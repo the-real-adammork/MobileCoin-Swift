@@ -24,7 +24,7 @@ final class FogBlockConnection:
 
         super.init(
             connectionOptionWrapperFactory: { transportProtocolOption in
-                switch transportProtocolOption {
+                switch TransportProtocol.Option.http {
                 case .grpc:
                     return .grpc(
                         grpcService: FogBlockGrpcConnection(
