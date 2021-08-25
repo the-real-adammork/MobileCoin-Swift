@@ -57,10 +57,10 @@ public class HTTPRequester {
     let configuration : URLSessionConfiguration
     let baseUrl: URL
     let trustRoots: [NIOSSLCertificate]?
-    let prefix: String = "gw"
 
     public init(baseUrl: URL, trustRoots: [NIOSSLCertificate]?, configuration: URLSessionConfiguration = HTTPRequester.defaultConfiguration) {
         self.configuration = configuration
+//        self.baseUrl = URL(string:"/gw/", relativeTo: baseUrl)!
         self.baseUrl = baseUrl
         self.trustRoots = trustRoots
     }
@@ -73,7 +73,7 @@ public protocol Requester {
 
 extension HTTPRequester : Requester {
     private func completeURLFromPath(_ path: String) -> URL? {
-        URL(string: path, relativeTo: URL(string: prefix, relativeTo: baseUrl))
+        URL(string: "/gw\(path)", relativeTo: baseUrl)
     }
     
 //    public func makeRequest<T: HTTPClientCall>(call: T, completion: @escaping (Result<HttpCallResult<T.ResponsePayload>, Error>) -> Void) {
@@ -84,8 +84,10 @@ extension HTTPRequester : Requester {
             completion(.failure(InvalidInputError("Invalid URL")))
             return
         }
+        logger.debug("completeURLFromPath: \(url.debugDescription)")
+        logger.debug("absoluteURL: \(url.absoluteURL.debugDescription)")
         
-        var request = URLRequest(url: url)
+        var request = URLRequest(url: url.absoluteURL)
         request.httpMethod = call.method.rawValue
         request.addProtoHeaders()
 
@@ -107,6 +109,8 @@ extension HTTPRequester : Requester {
                 return
             }
             
+            logger.debug("HTTPURLResponse debug:")
+            logger.debug(response.debugDescription)
             guard (200...299).contains(response.statusCode) else {
                 completion(.failure(HTTPResponseStatusCodeError(response.statusCode)))
                 return
@@ -116,7 +120,7 @@ extension HTTPRequester : Requester {
                 completion(.failure(NetworkingError.noData))
                 return
             }
-            
+           
             do {
                 let responsePayload = try T.ResponsePayload.init(serializedData: data)
                 logger.debug("Resposne Proto as JSON: \((try? responsePayload.jsonString()) ?? "Unable to print JSON")")
@@ -163,6 +167,7 @@ public enum HTTPResponseStatusCodeError : Error {
     case unauthorized
     case badRequest
     case forbidden
+    case notFound
     case unprocessableEntity
     case internalServerError
     case invalidResponseFromExternal
@@ -174,6 +179,7 @@ public enum HTTPResponseStatusCodeError : Error {
         case 400: self = .badRequest
         case 401: self = .unauthorized
         case 403: self = .forbidden
+        case 404: self = .notFound
         case 422: self = .unprocessableEntity
         case 500: self = .internalServerError
         case 502: self = .invalidResponseFromExternal
@@ -186,6 +192,7 @@ public enum HTTPResponseStatusCodeError : Error {
         case .badRequest: return 400
         case .unauthorized: return 401
         case .forbidden: return 403
+        case .notFound: return 404
         case .unprocessableEntity: return 422
         case .internalServerError: return 500
         case .invalidResponseFromExternal: return 502
@@ -195,11 +202,16 @@ public enum HTTPResponseStatusCodeError : Error {
 }
 
 extension HTTPResponseStatusCodeError : CustomStringConvertible {
+    public var localizedDescription: String {
+        return description
+    }
+    
     public var description: String {
         switch self {
         case .badRequest: return "The request is malformed (ex. missing or incorrect parameters)"
         case .unauthorized: return "Failed to provide proper authentication with the request."
         case .forbidden: return "The action in the request is not allowed."
+        case .notFound: return "Not Found"
         case .unprocessableEntity: return "The server understands the content type of the request entity, and the syntax of the request entity is correct, but it was unable to process the contained instructions."
         case .internalServerError: return "Unhandled exception from one of the other services: the Database, FTX, or the Full Service Wallet."
         case .invalidResponseFromExternal: return "The server was acting as a gateway or proxy and received an invalid response from the upstream server (ie. one of the other services: the Database, FTX, or the Full Service Wallet.)"
