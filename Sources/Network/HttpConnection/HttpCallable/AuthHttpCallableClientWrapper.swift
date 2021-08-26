@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import LibMobileCoin
 
 
 ///// A HTTP client.
@@ -46,11 +47,48 @@ import Foundation
 //    }
 //}
 
-//struct AuthHttpCallableCloientWrapper<WrappedClient>: AuthHttpCallableClient {
-//    private let client : AttestableHttpClient
-//    
-//
-//    var requester: HTTPRequester
-//    
-//    
-//}
+protocol AuthQueryHttpCalleeAndClient : QueryHttpCallee, AuthHttpCallee, HTTPClient {}
+
+struct AuthHttpCallableClientWrapper<WrappedClient:HTTPClient>: HTTPClient {
+    public var defaultHTTPCallOptions: HTTPCallOptions {
+        get {
+            return client.defaultHTTPCallOptions
+        }
+        set {
+            logger.warning("defaultHTTPOptions set not implemented")
+        }
+    }
+    
+    let client : WrappedClient
+    let requester: HTTPRequester
+}
+
+extension AuthHttpCallableClientWrapper : AuthHttpCallableClient  where WrappedClient : AuthHttpCallee {
+    func auth(_ request: Attest_AuthMessage, callOptions: HTTPCallOptions?)
+    -> HTTPUnaryCall<Attest_AuthMessage, Attest_AuthMessage> {
+        client.auth(request, callOptions: callOptions)
+    }
+    
+    func query(
+      _ request: Attest_Message,
+      callOptions: HTTPCallOptions?
+    ) -> HTTPUnaryCall<Attest_Message, Attest_Message> {
+        client.query(request, callOptions: callOptions)
+    }
+    
+    func auth(
+        _ request: Attest_AuthMessage,
+        callOptions: HTTPCallOptions?,
+        completion: @escaping (HttpCallResult<Attest_AuthMessage>) -> Void) {
+        
+        let clientCall = auth(request, callOptions: callOptions)
+        requester.makeRequest(call: clientCall) { result in
+            switch result {
+            case .success(let callResult):
+                completion(callResult)
+            case .failure(let error):
+                logger.error(error.localizedDescription)
+            }
+        }
+    }
+}

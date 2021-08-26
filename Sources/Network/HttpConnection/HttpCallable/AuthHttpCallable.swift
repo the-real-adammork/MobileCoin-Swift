@@ -7,10 +7,26 @@ import GRPC
 import LibMobileCoin
 
 protocol AuthHttpCallable {
+    var requester: HTTPRequester { get }
+    
     func auth(
         _ request: Attest_AuthMessage,
         callOptions: HTTPCallOptions?,
         completion: @escaping (HttpCallResult<Attest_AuthMessage>) -> Void)
+}
+
+protocol AuthHttpCallee {
+    func auth(
+      _ request: Attest_AuthMessage,
+      callOptions: HTTPCallOptions?
+    ) -> HTTPUnaryCall<Attest_AuthMessage, Attest_AuthMessage>
+}
+
+protocol QueryHttpCallee {
+    func query(
+      _ request: Attest_Message,
+      callOptions: HTTPCallOptions?
+    ) -> HTTPUnaryCall<Attest_Message, Attest_Message>
 }
 
 struct AuthHttpCallableWrapper: HttpCallable {
