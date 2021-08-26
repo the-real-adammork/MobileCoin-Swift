@@ -85,3 +85,21 @@ extension AuthHttpCallableClientWrapper where WrappedClient : QueryHttpCallee {
         client.query(request, callOptions: callOptions)
     }
 }
+
+extension AuthHttpCallableClientWrapper where WrappedClient : OutputsHttpCallee {
+    func getOutputs(
+      _ request: Attest_Message,
+      callOptions: HTTPCallOptions?
+    ) -> HTTPUnaryCall<Attest_Message, Attest_Message> {
+        client.getOutputs(request, callOptions: callOptions)
+    }
+}
+
+extension AuthHttpCallableClientWrapper where WrappedClient : CheckKeyImagesCallee {
+    func checkKeyImages(
+      _ request: Attest_Message,
+      callOptions: HTTPCallOptions?
+    ) -> HTTPUnaryCall<Attest_Message, Attest_Message> {
+        client.checkKeyImages(request, callOptions: callOptions)
+    }
+}

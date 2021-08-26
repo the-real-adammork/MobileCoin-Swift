@@ -20,6 +20,7 @@ final class FogMerkleProofHttpConnection: AttestedHttpConnection, FogMerkleProof
         self.client = AuthHttpCallableClientWrapper(client:FogLedger_FogMerkleProofAPIRestClient(), requester: self.requester)
         super.init(
             client: self.client,
+            requester: self.requester,
             config: config,
             targetQueue: targetQueue,
             rng: rng,
@@ -31,28 +32,30 @@ final class FogMerkleProofHttpConnection: AttestedHttpConnection, FogMerkleProof
         completion: @escaping (Result<FogLedger_GetOutputsResponse, ConnectionError>) -> Void
     ) {
         performAttestedCall(
-            GetOutputsCall(client: client),
+            GetOutputsCall(client: client, requester: self.requester),
             request: request,
             completion: completion)
     }
 }
 
 extension FogMerkleProofHttpConnection {
-    private struct GetOutputsCall: AttestedGrpcCallable {
+    private struct GetOutputsCall: AttestedHttpCallable {
         typealias InnerRequest = FogLedger_GetOutputsRequest
         typealias InnerResponse = FogLedger_GetOutputsResponse
 
         let client: AuthHttpCallableClientWrapper<FogLedger_FogMerkleProofAPIRestClient>
+        let requester: HTTPRequester
 
         func call(
             request: Attest_Message,
             callOptions: HTTPCallOptions?,
-            completion: @escaping (UnaryCallResult<Attest_Message>) -> Void
+            completion: @escaping (HttpCallResult<Attest_Message>) -> Void
         ) {
             let unaryCall = client.getOutputs(request, callOptions: callOptions)
-            unaryCall.callResult.whenSuccess(completion)
+            requester.makeRequest(call: unaryCall, completion: completion)
         }
     }
 }
 
-extension FogLedger_FogMerkleProofAPIRestClient: AuthGrpcCallableClient {}
+extension FogLedger_FogMerkleProofAPIRestClient: AuthHttpCallee, OutputsHttpCallee {}
+

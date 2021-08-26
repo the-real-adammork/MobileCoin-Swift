@@ -29,6 +29,20 @@ protocol QueryHttpCallee {
     ) -> HTTPUnaryCall<Attest_Message, Attest_Message>
 }
 
+protocol OutputsHttpCallee {
+    func getOutputs(
+      _ request: Attest_Message,
+      callOptions: HTTPCallOptions?
+    ) -> HTTPUnaryCall<Attest_Message, Attest_Message>
+}
+
+protocol CheckKeyImagesCallee {
+    func checkKeyImages(
+      _ request: Attest_Message,
+      callOptions: HTTPCallOptions?
+    ) -> HTTPUnaryCall<Attest_Message, Attest_Message>
+}
+
 struct AuthHttpCallableWrapper: HttpCallable {
 //    typealias Request = Attest_AuthMessage
 //    typealias Response = Attest_AuthMessage

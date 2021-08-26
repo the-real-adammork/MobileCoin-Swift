@@ -30,7 +30,7 @@ final class FogMerkleProofConnection:
 
         super.init(
             connectionOptionWrapperFactory: { transportProtocolOption in
-                switch transportProtocolOption {
+                switch TransportProtocol.Option.http {
                 case .grpc:
                     return .grpc(
                         grpcService: FogMerkleProofGrpcConnection(
@@ -40,7 +40,12 @@ final class FogMerkleProofConnection:
                             rng: rng,
                             rngContext: rngContext))
                 case .http:
-                    return .http(httpService: FogMerkleProofHttpConnection())
+                    return .http(httpService: FogMerkleProofHttpConnection(
+                                    config: config,
+                                    requester: nil,
+                                    targetQueue: targetQueue,
+                                    rng: rng,
+                                    rngContext: rngContext))
                 }
             },
             transportProtocolOption: config.transportProtocolOption,

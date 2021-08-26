@@ -8,14 +8,14 @@ import LibMobileCoin
 
 
 final class FogBlockHttpConnection: HttpConnection, FogBlockService {
-    private let client: FogLedger_FogBlockAPI
+    private let client: FogLedger_FogBlockAPIRestClient
     private let requester: HTTPRequester
 
     init(
         config: ConnectionConfig<FogUrl>,
         targetQueue: DispatchQueue?
     ) {
-        self.client = FogLedger_FogBlockAPI()
+        self.client = FogLedger_FogBlockAPIRestClient()
         self.requester = HTTPRequester(baseUrl: config.url.httpBasedUrl, trustRoots: config.trustRoots)
         super.init(config: config, targetQueue: targetQueue)
     }
@@ -30,7 +30,7 @@ final class FogBlockHttpConnection: HttpConnection, FogBlockService {
 
 extension FogBlockHttpConnection {
     private struct GetBlocksCall: HttpCallable {
-        let client: FogLedger_FogBlockAPI
+        let client: FogLedger_FogBlockAPIRestClient
         let requester: HTTPRequester
 
         func call(

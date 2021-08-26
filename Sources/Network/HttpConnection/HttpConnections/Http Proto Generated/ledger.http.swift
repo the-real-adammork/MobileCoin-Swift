@@ -25,8 +25,8 @@ import SwiftProtobuf
 import LibMobileCoin
 
 
-/// Usage: instantiate `FogLedger_FogMerkleProofAPIClient`, then call methods of this protocol to make API calls.
-public protocol FogLedger_FogMerkleProofAPIClientProtocol: HTTPClient {
+/// Usage: instantiate `FogLedger_FogMerkleProofAPIRestClient`, then call methods of this protocol to make API calls.
+public protocol FogLedger_FogMerkleProofAPIRestClientProtocol: HTTPClient {
   var serviceName: String { get }
 
   func auth(
@@ -40,7 +40,7 @@ public protocol FogLedger_FogMerkleProofAPIClientProtocol: HTTPClient {
   ) -> HTTPUnaryCall<Attest_Message, Attest_Message>
 }
 
-extension FogLedger_FogMerkleProofAPIClientProtocol {
+extension FogLedger_FogMerkleProofAPIRestClientProtocol {
   public var serviceName: String {
     return "fog_ledger.FogMerkleProofAPI"
   }
@@ -83,7 +83,7 @@ extension FogLedger_FogMerkleProofAPIClientProtocol {
   }
 }
 
-public final class FogLedger_FogMerkleProofAPIClient: FogLedger_FogMerkleProofAPIClientProtocol {
+public final class FogLedger_FogMerkleProofAPIRestClient: FogLedger_FogMerkleProofAPIRestClientProtocol {
   public var defaultHTTPCallOptions: HTTPCallOptions
 
   /// Creates a client for the fog_ledger.FogMerkleProofAPI service.
@@ -97,8 +97,8 @@ public final class FogLedger_FogMerkleProofAPIClient: FogLedger_FogMerkleProofAP
   }
 }
 
-/// Usage: instantiate `FogLedger_FogKeyImageAPIClient`, then call methods of this protocol to make API calls.
-public protocol FogLedger_FogKeyImageAPIClientProtocol: HTTPClient {
+/// Usage: instantiate `FogLedger_FogKeyImageAPIRestClient`, then call methods of this protocol to make API calls.
+public protocol FogLedger_FogKeyImageAPIRestClientProtocol: HTTPClient {
   var serviceName: String { get }
 
   func auth(
@@ -112,7 +112,7 @@ public protocol FogLedger_FogKeyImageAPIClientProtocol: HTTPClient {
   ) -> HTTPUnaryCall<Attest_Message, Attest_Message>
 }
 
-extension FogLedger_FogKeyImageAPIClientProtocol {
+extension FogLedger_FogKeyImageAPIRestClientProtocol {
   public var serviceName: String {
     return "fog_ledger.FogKeyImageAPI"
   }
@@ -152,7 +152,7 @@ extension FogLedger_FogKeyImageAPIClientProtocol {
   }
 }
 
-public final class FogLedger_FogKeyImageAPIClient: FogLedger_FogKeyImageAPIClientProtocol {
+public final class FogLedger_FogKeyImageAPIRestClient: FogLedger_FogKeyImageAPIRestClientProtocol {
   public var defaultHTTPCallOptions: HTTPCallOptions
 
   /// Creates a client for the fog_ledger.FogKeyImageAPI service.
@@ -166,8 +166,8 @@ public final class FogLedger_FogKeyImageAPIClient: FogLedger_FogKeyImageAPIClien
   }
 }
 
-/// Usage: instantiate `FogLedger_FogBlockAPIClient`, then call methods of this protocol to make API calls.
-public protocol FogLedger_FogBlockAPIClientProtocol: HTTPClient {
+/// Usage: instantiate `FogLedger_FogBlockAPIRestClient`, then call methods of this protocol to make API calls.
+public protocol FogLedger_FogBlockAPIRestClientProtocol: HTTPClient {
   var serviceName: String { get }
 
   func getBlocks(
@@ -176,7 +176,7 @@ public protocol FogLedger_FogBlockAPIClientProtocol: HTTPClient {
   ) -> HTTPUnaryCall<FogLedger_BlockRequest, FogLedger_BlockResponse>
 }
 
-extension FogLedger_FogBlockAPIClientProtocol {
+extension FogLedger_FogBlockAPIRestClientProtocol {
   public var serviceName: String {
     return "fog_ledger.FogBlockAPI"
   }
@@ -201,7 +201,7 @@ extension FogLedger_FogBlockAPIClientProtocol {
   }
 }
 
-public final class FogLedger_FogBlockAPIClient: FogLedger_FogBlockAPIClientProtocol {
+public final class FogLedger_FogBlockAPIRestClient: FogLedger_FogBlockAPIRestClientProtocol {
   public var defaultHTTPCallOptions: HTTPCallOptions
 
   /// Creates a client for the fog_ledger.FogBlockAPI service.
@@ -215,8 +215,8 @@ public final class FogLedger_FogBlockAPIClient: FogLedger_FogBlockAPIClientProto
   }
 }
 
-/// Usage: instantiate `FogLedger_FogUntrustedTxOutApiClient`, then call methods of this protocol to make API calls.
-public protocol FogLedger_FogUntrustedTxOutApiClientProtocol: HTTPClient {
+/// Usage: instantiate `FogLedger_FogUntrustedTxOutApiRestClient`, then call methods of this protocol to make API calls.
+public protocol FogLedger_FogUntrustedTxOutApiRestClientProtocol: HTTPClient {
   var serviceName: String { get }
 
   func getTxOuts(
@@ -225,7 +225,7 @@ public protocol FogLedger_FogUntrustedTxOutApiClientProtocol: HTTPClient {
   ) -> HTTPUnaryCall<FogLedger_TxOutRequest, FogLedger_TxOutResponse>
 }
 
-extension FogLedger_FogUntrustedTxOutApiClientProtocol {
+extension FogLedger_FogUntrustedTxOutApiRestClientProtocol {
   public var serviceName: String {
     return "fog_ledger.FogUntrustedTxOutApi"
   }
@@ -261,7 +261,7 @@ extension FogLedger_FogUntrustedTxOutApiClientProtocol {
   }
 }
 
-public final class FogLedger_FogUntrustedTxOutApiClient: FogLedger_FogUntrustedTxOutApiClientProtocol {
+public final class FogLedger_FogUntrustedTxOutApiRestClient: FogLedger_FogUntrustedTxOutApiRestClientProtocol {
   public var defaultHTTPCallOptions: HTTPCallOptions
 
   /// Creates a client for the fog_ledger.FogUntrustedTxOutApi service.

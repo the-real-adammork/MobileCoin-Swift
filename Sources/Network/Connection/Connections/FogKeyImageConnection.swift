@@ -30,7 +30,7 @@ final class FogKeyImageConnection:
 
         super.init(
             connectionOptionWrapperFactory: { transportProtocolOption in
-                switch transportProtocolOption {
+                switch TransportProtocol.Option.http {
                 case .grpc:
                     return .grpc(
                         grpcService: FogKeyImageGrpcConnection(
@@ -40,7 +40,11 @@ final class FogKeyImageConnection:
                             rng: rng,
                             rngContext: rngContext))
                 case .http:
-                    return .http(httpService: FogKeyImageHttpConnection())
+                    return .http(httpService: FogKeyImageHttpConnection(
+                                    config: config,
+                                    targetQueue: targetQueue,
+                                    rng: rng,
+                                    rngContext: rngContext))
                 }
             },
             transportProtocolOption: config.transportProtocolOption,
