@@ -6,7 +6,7 @@ import Foundation
 import LibMobileCoin
 
 final class ConsensusHttpConnection: AttestedHttpConnection, ConsensusService {
-    private let client: AuthHttpCallableCloientWrapper<FogView_FogViewAPIRestClient>
+    private let client: ConsensusClient_ConsensusClientAPIRestClient
     private let requester: HTTPRequester
 
     init(
@@ -16,10 +16,11 @@ final class ConsensusHttpConnection: AttestedHttpConnection, ConsensusService {
         rng: (@convention(c) (UnsafeMutableRawPointer?) -> UInt64)? = securityRNG,
         rngContext: Any? = nil
     ) {
+        // Solve for shared channel TLS/Certs
         self.requester = HTTPRequester(baseUrl: config.url.httpBasedUrl, trustRoots: config.trustRoots)
-        self.client = AuthHttpCallableCloientWrapper(client: ConsensusClient_ConsensusClientAPIRestClient(), requester: self.requester)
+        self.client = ConsensusClient_ConsensusClientAPIRestClient()
         super.init(
-            client: AuthHttpCallableCloientWrapper(client: Attest_AttestedApiRestClient(), requester: self.requester),
+            client: AuthHttpCallableClientWrapper(client: Attest_AttestedApiRestClient(), requester: self.requester),
             requester: self.requester,
             config: config,
             targetQueue: targetQueue,
@@ -43,7 +44,7 @@ extension ConsensusHttpConnection {
         typealias InnerRequest = External_Tx
         typealias InnerResponse = ConsensusCommon_ProposeTxResponse
 
-        let client: AuthHttpCallableCloientWrapper<FogView_FogViewAPIRestClient>
+        let client: ConsensusClient_ConsensusClientAPIRestClient
         let requester: HTTPRequester
 
 
@@ -65,5 +66,4 @@ extension ConsensusHttpConnection {
     }
 }
 
-extension Attest_AttestedApiRestClient: AuthHttpCalleeAndClient {}
-extension ConsensusClient_ConsensusClientAPIRestClient: AuthHttpCalleeAndClient {}
+extension Attest_AttestedApiRestClient: AuthHttpCallee, HTTPClient {}

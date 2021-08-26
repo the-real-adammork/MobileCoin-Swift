@@ -49,7 +49,7 @@ import LibMobileCoin
 
 protocol AuthQueryHttpCalleeAndClient : QueryHttpCallee, AuthHttpCallee, HTTPClient {}
 
-struct AuthHttpCallableClientWrapper<WrappedClient:HTTPClient>: HTTPClient {
+struct AuthHttpCallableClientWrapper<WrappedClient:HTTPClient & AuthHttpCallee>: AuthHttpCallableClient, HTTPClient {
     public var defaultHTTPCallOptions: HTTPCallOptions {
         get {
             return client.defaultHTTPCallOptions
@@ -61,25 +61,12 @@ struct AuthHttpCallableClientWrapper<WrappedClient:HTTPClient>: HTTPClient {
     
     let client : WrappedClient
     let requester: HTTPRequester
-}
 
-extension AuthHttpCallableClientWrapper where WrappedClient : AuthHttpCallee {
     func auth(_ request: Attest_AuthMessage, callOptions: HTTPCallOptions?)
     -> HTTPUnaryCall<Attest_AuthMessage, Attest_AuthMessage> {
         client.auth(request, callOptions: callOptions)
     }
-}
-
-extension AuthHttpCallableClientWrapper where WrappedClient : QueryHttpCallee {
-    func query(
-      _ request: Attest_Message,
-      callOptions: HTTPCallOptions?
-    ) -> HTTPUnaryCall<Attest_Message, Attest_Message> {
-        client.query(request, callOptions: callOptions)
-    }
-}
-
-extension AuthHttpCallableClientWrapper where WrappedClient : AuthHttpCallable, WrappedClient : AuthHttpCallee {
+    
     func auth(
         _ request: Attest_AuthMessage,
         callOptions: HTTPCallOptions?,
@@ -97,4 +84,11 @@ extension AuthHttpCallableClientWrapper where WrappedClient : AuthHttpCallable, 
     }
 }
 
-extension AuthHttpCallableClientWrapper :
+extension AuthHttpCallableClientWrapper where WrappedClient : QueryHttpCallee {
+    func query(
+      _ request: Attest_Message,
+      callOptions: HTTPCallOptions?
+    ) -> HTTPUnaryCall<Attest_Message, Attest_Message> {
+        client.query(request, callOptions: callOptions)
+    }
+}
