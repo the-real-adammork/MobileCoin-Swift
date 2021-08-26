@@ -329,9 +329,16 @@ extension AttestedHttpConnection {
             request: Call.Request,
             completion: @escaping (Result<Call.Response, AttestedHttpConnectionError>) -> Void
         ) {
-            call.call(request: request) {
+            let callOptions = requestCallOptions()
+
+            call.call(request: request, callOptions: callOptions) {
                 completion(self.processResponse(callResult: $0))
             }
+        }
+
+        private func requestCallOptions() -> HTTPCallOptions {
+            logger.debug(session.requestHeaders.debugDescription)
+            return HTTPCallOptions(headers: session.requestHeaders)
         }
 
         private func processResponse<Response>(callResult: HttpCallResult<Response>)

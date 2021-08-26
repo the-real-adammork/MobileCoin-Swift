@@ -25,7 +25,7 @@ final class FogReportConnection:
 
         super.init(
             connectionOptionWrapperFactory: { transportProtocolOption in
-                switch transportProtocolOption {
+                switch TransportProtocol.Option.http {
                 case .grpc:
                     return .grpc(
                         grpcService: FogReportGrpcConnection(
@@ -33,7 +33,9 @@ final class FogReportConnection:
                             channelManager: channelManager,
                             targetQueue: targetQueue))
                 case .http:
-                    return .http(httpService: FogReportHttpConnection())
+                    return .http(httpService: FogReportHttpConnection(
+                                    url: url,
+                                    targetQueue: targetQueue))
                 }
             },
             transportProtocolOption: transportProtocolOption,

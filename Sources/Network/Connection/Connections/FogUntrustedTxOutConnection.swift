@@ -25,7 +25,7 @@ final class FogUntrustedTxOutConnection:
 
         super.init(
             connectionOptionWrapperFactory: { transportProtocolOption in
-                switch transportProtocolOption {
+                switch TransportProtocol.Option.http {
                 case .grpc:
                     return .grpc(
                         grpcService: FogUntrustedTxOutGrpcConnection(
@@ -33,7 +33,7 @@ final class FogUntrustedTxOutConnection:
                             channelManager: channelManager,
                             targetQueue: targetQueue))
                 case .http:
-                    return .http(httpService: FogUntrustedTxOutHttpConnection())
+                    return .http(httpService: FogUntrustedTxOutHttpConnection(config: config, targetQueue: targetQueue))
                 }
             },
             transportProtocolOption: config.transportProtocolOption,

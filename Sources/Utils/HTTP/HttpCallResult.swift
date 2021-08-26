@@ -16,12 +16,10 @@ public struct HttpCallResult<ResponsePayload> {
 
 extension HttpCallResult {
     init(
-        status: GRPCStatus,
-        initialMetadata: HTTPURLResponse?,
-        response: ResponsePayload?
+        status: HTTPStatus
     ) {
         // TODO REMOVE
-        self.init(status: HTTPStatus(grpcStatus: status), initialMetadata: initialMetadata, response: response)
+        self.init(status: status, initialMetadata: nil, response: nil)
     }
 }
 

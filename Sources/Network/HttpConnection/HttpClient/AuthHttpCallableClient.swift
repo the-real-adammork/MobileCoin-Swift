@@ -24,14 +24,7 @@ extension AuthHttpCallableClient {
         completion: @escaping (HttpCallResult<Attest_AuthMessage>) -> Void
     ) {
         let clientCall = auth(request, callOptions: callOptions)
-        requester.makeRequest(call: clientCall) { result in
-            switch result {
-            case .success(let callResult):
-                completion(callResult)
-            case .failure(let error):
-                logger.error(error.localizedDescription)
-            }
-        }
+        requester.makeRequest(call: clientCall, completion: completion)
     }
 }
 

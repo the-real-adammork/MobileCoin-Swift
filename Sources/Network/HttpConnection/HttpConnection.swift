@@ -81,7 +81,7 @@ extension HttpConnection {
         func processResponse<Response>(callResult: HttpCallResult<Response>)
             -> Result<Response, ConnectionError>
         {
-            guard callResult.status.code != 403 else {
+            guard [403, 401].contains(callResult.status.code) == false else {
                 return .failure(.authorizationFailure("url: \(url)"))
             }
 

@@ -68,7 +68,7 @@ public class HTTPRequester {
 
 public protocol Requester {
 //    func makeRequest<T: HTTPClientCall>(call: T, completion: @escaping (Result<T.ResponsePayload, Error>) -> Void)
-    func makeRequest<T: HTTPClientCall>(call: T, completion: @escaping (Result<HttpCallResult<T.ResponsePayload>, Error>) -> Void)
+    func makeRequest<T: HTTPClientCall>(call: T, completion: @escaping (HttpCallResult<T.ResponsePayload>) -> Void)
 }
 
 extension HTTPRequester : Requester {
@@ -77,11 +77,12 @@ extension HTTPRequester : Requester {
     }
     
 //    public func makeRequest<T: HTTPClientCall>(call: T, completion: @escaping (Result<HttpCallResult<T.ResponsePayload>, Error>) -> Void) {
-    public func makeRequest<T: HTTPClientCall>(call: T, completion: @escaping (Result<HttpCallResult<T.ResponsePayload>, Error>) -> Void) {
+    public func makeRequest<T: HTTPClientCall>(call: T, completion: @escaping (HttpCallResult<T.ResponsePayload>) -> Void) {
         let session = URLSession(configuration: configuration)
         
         guard let url = completeURLFromPath(call.path) else {
-            completion(.failure(InvalidInputError("Invalid URL")))
+            // TODO move out of Requester ?
+            completion(HttpCallResult(status: HTTPStatus(code: 1, message: "could not construct URL")))
             return
         }
         logger.debug("completeURLFromPath: \(url.debugDescription)")
@@ -105,41 +106,36 @@ extension HTTPRequester : Requester {
             logger.debug("MC HTTP Request: \(call.requestPayload?.prettyPrintJSON() ?? "")")
         } catch let error {
             logger.debug(error.localizedDescription)
+            completion(HttpCallResult(status: HTTPStatus(code: 1, message: error.localizedDescription)))
         }
 
         session.dataTask(with: request) { data, response, error in
             if let error = error {
-                completion(.failure(error))
+                completion(HttpCallResult(status: HTTPStatus(code: 1, message: error.localizedDescription)))
                 return
             }
             
             guard let response = response as? HTTPURLResponse else {
-                completion(.failure(NetworkingError.noResponse))
+                completion(HttpCallResult(status: HTTPStatus(code: 1, message: "No response object")))
                 return
             }
             
             logger.debug("HTTPURLResponse debug:")
             logger.debug(response.debugDescription)
-            guard (200...299).contains(response.statusCode) else {
-                completion(.failure(HTTPResponseStatusCodeError(response.statusCode)))
-                return
-            }
-            
-            guard let data = data else {
-                completion(.failure(NetworkingError.noData))
-                return
-            }
-           
-            do {
-                let responsePayload = try T.ResponsePayload.init(serializedData: data)
+
+            let responsePayload : T.ResponsePayload? = {
+                guard let data = data,
+                      let responsePayload = try? T.ResponsePayload.init(serializedData: data)
+                else {
+                    logger.debug("Response proto is empty or no data")
+                    return nil
+                }
                 logger.debug("Resposne Proto as JSON: \((try? responsePayload.jsonString()) ?? "Unable to print JSON")")
-                
-                // let result = HttpCallResult<T.ResponsePayload>(status: HTTPStatus(code: response.statusCode, message: ""), initialMetadata: response, response: responsePayload)
-                let result = HttpCallResult<T.ResponsePayload>(status: HTTPStatus(code: response.statusCode, message: ""), initialMetadata: response, response: responsePayload)
-                completion(.success(result))
-            } catch {
-                completion(.failure(error))
-            }
+                return responsePayload
+            }()
+
+            let result = HttpCallResult(status: HTTPStatus(code: response.statusCode, message: ""), initialMetadata: response, response: responsePayload)
+            completion(result)
         }.resume()
     }
     

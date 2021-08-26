@@ -39,14 +39,7 @@ extension FogBlockHttpConnection {
             completion: @escaping (HttpCallResult<FogLedger_BlockResponse>) -> Void
         ) {
             let clientCall = client.getBlocks(request, callOptions: callOptions)
-            requester.makeRequest(call: clientCall) { result in
-                switch result {
-                case .success(let callResult):
-                    completion(callResult)
-                case .failure(let error):
-                    completion(callResult)
-                }
-            }
+            requester.makeRequest(call: clientCall, completion: completion)
         }
     }
 }

@@ -38,14 +38,7 @@ extension BlockchainHttpConnection {
             completion: @escaping (HttpCallResult<ConsensusCommon_LastBlockInfoResponse>) -> Void
         ) {
             let clientCall = client.getLastBlockInfo(Google_Protobuf_Empty())
-            requester.makeRequest(call: clientCall) { result in
-                switch result {
-                case .success(let callResult):
-                    completion(callResult)
-                case .failure(let error):
-                    logger.error(error.localizedDescription)
-                }
-            }
+            requester.makeRequest(call: clientCall, completion: completion)
         }
     }
 }

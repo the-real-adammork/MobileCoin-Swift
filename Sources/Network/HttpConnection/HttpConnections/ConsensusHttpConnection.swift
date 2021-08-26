@@ -54,14 +54,7 @@ extension ConsensusHttpConnection {
             completion: @escaping (HttpCallResult<ConsensusCommon_ProposeTxResponse>) -> Void
         ) {
             let clientCall = client.clientTxPropose(request, callOptions: callOptions)
-            requester.makeRequest(call: clientCall) { result in
-                switch result {
-                case .success(let callResult):
-                    completion(callResult)
-                case .failure(let error):
-                    logger.error(error.localizedDescription)
-                }
-            }
+            requester.makeRequest(call: clientCall, completion: completion)
         }
     }
 }
