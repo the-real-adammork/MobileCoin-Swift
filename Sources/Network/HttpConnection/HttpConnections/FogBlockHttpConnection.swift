@@ -44,7 +44,7 @@ extension FogBlockHttpConnection {
                 case .success(let callResult):
                     completion(callResult)
                 case .failure(let error):
-                    logger.error(error.localizedDescription)
+                    completion(callResult)
                 }
             }
         }
