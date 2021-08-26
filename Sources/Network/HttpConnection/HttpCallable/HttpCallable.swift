@@ -3,11 +3,12 @@
 //
 
 import Foundation
-import GRPC
 
 public protocol HttpCallable {
     associatedtype Request
     associatedtype Response
+    
+    var requester: HTTPRequester { get } //TODO change to requester protocol
     
     func call(
         request: Request,

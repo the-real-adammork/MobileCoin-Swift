@@ -14,10 +14,11 @@ protocol AuthHttpCallable {
 }
 
 struct AuthHttpCallableWrapper: HttpCallable {
-    typealias Request = Attest_AuthMessage
-    typealias Response = Attest_AuthMessage
+//    typealias Request = Attest_AuthMessage
+//    typealias Response = Attest_AuthMessage
     
     let authCallable: AuthHttpCallable
+    let requester: HTTPRequester
 
     func call(
         request: Attest_AuthMessage,

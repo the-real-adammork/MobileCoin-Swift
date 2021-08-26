@@ -40,7 +40,11 @@ final class ConsensusConnection:
                             rng: rng,
                             rngContext: rngContext))
                 case .http:
-                    return .http(httpService: ConsensusHttpConnection())
+                    return .http(httpService: ConsensusHttpConnection(
+                                    config: config,
+                                    targetQueue: targetQueue,
+                                    rng: rng,
+                                    rngContext: rngContext))
                 }
             },
             transportProtocolOption: config.transportProtocolOption,

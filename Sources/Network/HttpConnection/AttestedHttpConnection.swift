@@ -6,7 +6,6 @@
 // swiftlint:disable multiline_function_chains operator_usage_whitespace
 
 import Foundation
-import GRPC
 import LibMobileCoin
 import NIO
 import NIOHPACK
@@ -30,16 +29,19 @@ extension AttestedHttpConnectionError: CustomStringConvertible {
 }
 
 class AttestedHttpConnection: ConnectionProtocol {
+    private let requester: HTTPRequester
     private let inner: SerialCallbackLock<Inner>
 
     init(
         client: AttestableHttpClient,
+        requester: HTTPRequester,
         config: AttestedConnectionConfigProtocol,
         targetQueue: DispatchQueue?,
         rng: (@convention(c) (UnsafeMutableRawPointer?) -> UInt64)? = securityRNG,
         rngContext: Any? = nil
     ) {
         let inner = Inner(client: client, config: config, rng: rng, rngContext: rngContext)
+        self.requester = requester
         self.inner = .init(inner, targetQueue: targetQueue)
     }
 
@@ -112,6 +114,7 @@ extension AttestedHttpConnection {
         private let url: MobileCoinUrlProtocol
         private let session: ConnectionSession
         private let client: AttestableHttpClient
+        private let requester: HTTPRequester
         private let attestAke: AttestAke
 
         private let responderId: String
@@ -128,6 +131,7 @@ extension AttestedHttpConnection {
             self.url = config.url
             self.session = ConnectionSession(config: config)
             self.client = client
+            self.requester = HTTPRequester(baseUrl: config.url.httpBasedUrl, trustRoots: config.trustRoots)
             self.attestAke = AttestAke()
             self.responderId = config.url.responderId
             self.attestationVerifier = AttestationVerifier(attestation: config.attestation)
@@ -264,7 +268,7 @@ extension AttestedHttpConnection {
                 rngContext: rngContext)
 
             doPerformCall(
-                AuthHttpCallableWrapper(authCallable: client.authCallable),
+                AuthHttpCallableWrapper(authCallable: client.authCallable, requester: requester),
                 request: request
             ) {
                 completion(

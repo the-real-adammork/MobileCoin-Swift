@@ -40,13 +40,12 @@ final class FogViewConnection:
                             rng: rng,
                             rngContext: rngContext))
                 case .http:
-                    let httpClientWrapper = HttpClientWrapper(
-                        config: config,
-                        httpRequester: httpRequester)
+//                    let httpClientWrapper = HttpClientWrapper(
+//                        config: config,
+//                        httpRequester: httpRequester)
                     return .http(
                         httpService: FogViewHttpConnection(
                             config: config,
-                            client: httpClientWrapper,
                             targetQueue: targetQueue,
                             rng: rng,
                             rngContext: rngContext))

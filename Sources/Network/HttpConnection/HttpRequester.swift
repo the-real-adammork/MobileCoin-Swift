@@ -87,6 +87,14 @@ extension HTTPRequester : Requester {
         logger.debug("completeURLFromPath: \(url.debugDescription)")
         logger.debug("absoluteURL: \(url.absoluteURL.debugDescription)")
         
+        
+        /*
+         - Convert all service files that rely on HTTPConnection, fix using integration tests
+         - Port AttestedHTTPConnection, fix using integration tests
+         - Cleanup code, tighten up solution.
+         - Add requester requirement to HTTPCallable, AuthHTTPCallable
+         - Add requester requirement to HTTPConnection, AttestableHTTPConnection
+         */
         var request = URLRequest(url: url.absoluteURL)
         request.httpMethod = call.method.rawValue
         request.addProtoHeaders()

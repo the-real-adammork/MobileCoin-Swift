@@ -46,9 +46,6 @@ extension BlockchainHttpConnection {
                     logger.error(error.localizedDescription)
                 }
             }
-//            let unaryCall =
-//                client.getLastBlockInfo(Google_Protobuf_Empty(), callOptions: callOptions)
-//            unaryCall.callResult.whenSuccess(completion)
         }
     }
 }
