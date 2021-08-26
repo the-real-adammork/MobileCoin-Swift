@@ -63,19 +63,23 @@ struct AuthHttpCallableClientWrapper<WrappedClient:HTTPClient>: HTTPClient {
     let requester: HTTPRequester
 }
 
-extension AuthHttpCallableClientWrapper : AuthHttpCallableClient  where WrappedClient : AuthHttpCallee {
+extension AuthHttpCallableClientWrapper where WrappedClient : AuthHttpCallee {
     func auth(_ request: Attest_AuthMessage, callOptions: HTTPCallOptions?)
     -> HTTPUnaryCall<Attest_AuthMessage, Attest_AuthMessage> {
         client.auth(request, callOptions: callOptions)
     }
-    
+}
+
+extension AuthHttpCallableClientWrapper where WrappedClient : QueryHttpCallee {
     func query(
       _ request: Attest_Message,
       callOptions: HTTPCallOptions?
     ) -> HTTPUnaryCall<Attest_Message, Attest_Message> {
         client.query(request, callOptions: callOptions)
     }
-    
+}
+
+extension AuthHttpCallableClientWrapper where WrappedClient : AuthHttpCallable, WrappedClient : AuthHttpCallee {
     func auth(
         _ request: Attest_AuthMessage,
         callOptions: HTTPCallOptions?,
@@ -92,3 +96,5 @@ extension AuthHttpCallableClientWrapper : AuthHttpCallableClient  where WrappedC
         }
     }
 }
+
+extension AuthHttpCallableClientWrapper :
