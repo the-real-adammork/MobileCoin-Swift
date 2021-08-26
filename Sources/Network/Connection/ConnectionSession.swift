@@ -115,3 +115,63 @@ extension HPACKHeaders {
         add(contentsOf: HPACKHeaders(httpHeaders: httpHeaders))
     }
 }
+
+class ConnectionSessionTrust : NSObject, URLSessionDelegate {
+    let config : ConnectionConfigProtocol
+
+    init(config: ConnectionConfigProtocol) {
+        self.config = config
+    }
+    
+    func urlSession(_ session: URLSession,
+                  didReceive challenge: URLAuthenticationChallenge,
+                  completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
+        // indicates the server requested a client certificate.
+        guard challenge.protectionSpace.authenticationMethod == NSURLAuthenticationMethodClientCertificate else {
+            logger.info("No cert needed")
+            completionHandler(.performDefaultHandling, nil)
+            return
+        }
+        
+        guard let trust = challenge.protectionSpace.serverTrust else {
+            logger.info("no server trust")
+            completionHandler(.performDefaultHandling, nil)
+            return
+        }
+
+//        let isServerTrusted = SecTrustEvaluateWithError(serverTrust, nil)
+        
+        if let serverCertificate = SecTrustGetCertificateAtIndex(trust, 0),
+           let serverCertificateKey = publicKey(for: serverCertificate) {
+           if pinnedKeys().contains(serverCertificateKey) {
+               completionHandler(.useCredential, URLCredential(trust: trust))
+               return
+           }
+       }
+        guard let file = Bundle(for: HTTPAccessURLSessionDelegate.self).url(forResource: p12Filename, withExtension: "p12"),
+              let p12Data = try? Data(contentsOf: file) else {
+            // Loading of the p12 file's data failed.
+            completionHandler(.performDefaultHandling, nil)
+            return
+        }
+
+        // Interpret the data in the P12 data blob with
+        // a little helper class called `PKCS12`.
+        let password = "MyP12Password" // Obviously this should be stored or entered more securely.
+        let p12Contents = PKCS12(pkcs12Data: p12Data, password: password)
+        guard let identity = p12Contents.identity else {
+            // Creating a PKCS12 never fails, but interpretting th contained data can. So again, no identity? We fall back to default.
+            completionHandler(.performDefaultHandling, nil)
+            return
+        }
+
+        // In my case, and as Apple recommends,
+        // we do not pass the certificate chain into
+        // the URLCredential used to respond to the challenge.
+        let credential = URLCredential(identity: identity,
+                                   certificates: nil,
+                                    persistence: .none)
+        challenge.sender?.use(credential, for: challenge)
+        completionHandler(.useCredential, credential)
+    }
+}

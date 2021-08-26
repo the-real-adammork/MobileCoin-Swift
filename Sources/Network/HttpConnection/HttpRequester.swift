@@ -261,3 +261,41 @@ extension NetworkingError: CustomStringConvertible {
         }
     }
 }
+
+//public class MyURLSessionDelegate: NSObject, URLSessionDelegate {
+//    public func urlSession(_ session: URLSession, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
+//        // `NSURLAuthenticationMethodClientCertificate`
+//        // indicates the server requested a client certificate.
+//        if challenge.protectionSpace.authenticationMethod
+//             != NSURLAuthenticationMethodClientCertificate {
+//                completionHandler(.performDefaultHandling, nil)
+//                return
+//        }
+//
+//        guard let file = Bundle(for: HTTPAccessURLSessionDelegate.self).url(forResource: p12Filename, withExtension: "p12"),
+//              let p12Data = try? Data(contentsOf: file) else {
+//            // Loading of the p12 file's data failed.
+//            completionHandler(.performDefaultHandling, nil)
+//            return
+//        }
+//
+//        // Interpret the data in the P12 data blob with
+//        // a little helper class called `PKCS12`.
+//        let password = "MyP12Password" // Obviously this should be stored or entered more securely.
+//        let p12Contents = PKCS12(pkcs12Data: p12Data, password: password)
+//        guard let identity = p12Contents.identity else {
+//            // Creating a PKCS12 never fails, but interpretting th contained data can. So again, no identity? We fall back to default.
+//            completionHandler(.performDefaultHandling, nil)
+//            return
+//        }
+//
+//        // In my case, and as Apple recommends,
+//        // we do not pass the certificate chain into
+//        // the URLCredential used to respond to the challenge.
+//        let credential = URLCredential(identity: identity,
+//                                   certificates: nil,
+//                                    persistence: .none)
+//        challenge.sender?.use(credential, for: challenge)
+//        completionHandler(.useCredential, credential)
+//    }
+//}
