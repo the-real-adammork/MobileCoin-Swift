@@ -28,17 +28,16 @@ import LibMobileCoin
 /// Usage: instantiate `FogLedger_FogMerkleProofAPIClient`, then call methods of this protocol to make API calls.
 public protocol FogLedger_FogMerkleProofAPIClientProtocol: HTTPClient {
   var serviceName: String { get }
-  var interceptors: FogLedger_FogMerkleProofAPIClientInterceptorFactoryProtocol? { get }
 
   func auth(
     _ request: Attest_AuthMessage,
-    callOptions: CallOptions?
-  ) -> UnaryCall<Attest_AuthMessage, Attest_AuthMessage>
+    callOptions: HTTPCallOptions?
+  ) -> HTTPUnaryCall<Attest_AuthMessage, Attest_AuthMessage>
 
   func getOutputs(
     _ request: Attest_Message,
-    callOptions: CallOptions?
-  ) -> UnaryCall<Attest_Message, Attest_Message>
+    callOptions: HTTPCallOptions?
+  ) -> HTTPUnaryCall<Attest_Message, Attest_Message>
 }
 
 extension FogLedger_FogMerkleProofAPIClientProtocol {
@@ -55,13 +54,12 @@ extension FogLedger_FogMerkleProofAPIClientProtocol {
   /// - Returns: A `UnaryCall` with futures for the metadata, status and response.
   public func auth(
     _ request: Attest_AuthMessage,
-    callOptions: CallOptions? = nil
-  ) -> UnaryCall<Attest_AuthMessage, Attest_AuthMessage> {
+    callOptions: HTTPCallOptions? = nil
+  ) -> HTTPUnaryCall<Attest_AuthMessage, Attest_AuthMessage> {
     return self.makeUnaryCall(
       path: "/fog_ledger.FogMerkleProofAPI/Auth",
       request: request,
-      callOptions: callOptions ?? self.defaultCallOptions,
-      interceptors: self.interceptors?.makeAuthInterceptors() ?? []
+      callOptions: callOptions ?? self.defaultHTTPCallOptions
     )
   }
 
@@ -75,62 +73,43 @@ extension FogLedger_FogMerkleProofAPIClientProtocol {
   /// - Returns: A `UnaryCall` with futures for the metadata, status and response.
   public func getOutputs(
     _ request: Attest_Message,
-    callOptions: CallOptions? = nil
-  ) -> UnaryCall<Attest_Message, Attest_Message> {
+    callOptions: HTTPCallOptions? = nil
+  ) -> HTTPUnaryCall<Attest_Message, Attest_Message> {
     return self.makeUnaryCall(
       path: "/fog_ledger.FogMerkleProofAPI/GetOutputs",
       request: request,
-      callOptions: callOptions ?? self.defaultCallOptions,
-      interceptors: self.interceptors?.makeGetOutputsInterceptors() ?? []
+      callOptions: callOptions ?? self.defaultHTTPCallOptions
     )
   }
 }
 
-public protocol FogLedger_FogMerkleProofAPIClientInterceptorFactoryProtocol {
-
-  /// - Returns: Interceptors to use when invoking 'auth'.
-  func makeAuthInterceptors() -> [ClientInterceptor<Attest_AuthMessage, Attest_AuthMessage>]
-
-  /// - Returns: Interceptors to use when invoking 'getOutputs'.
-  func makeGetOutputsInterceptors() -> [ClientInterceptor<Attest_Message, Attest_Message>]
-}
-
 public final class FogLedger_FogMerkleProofAPIClient: FogLedger_FogMerkleProofAPIClientProtocol {
-  public let channel: GRPCChannel
-  public var defaultCallOptions: CallOptions
-  public var interceptors: FogLedger_FogMerkleProofAPIClientInterceptorFactoryProtocol?
+  public var defaultHTTPCallOptions: HTTPCallOptions
 
   /// Creates a client for the fog_ledger.FogMerkleProofAPI service.
   ///
   /// - Parameters:
-  ///   - channel: `GRPCChannel` to the service host.
-  ///   - defaultCallOptions: Options to use for each service call if the user doesn't provide them.
-  ///   - interceptors: A factory providing interceptors for each RPC.
+  ///   - defaultHTTPCallOptions: Options to use for each service call if the user doesn't provide them.
   public init(
-    channel: GRPCChannel,
-    defaultCallOptions: CallOptions = CallOptions(),
-    interceptors: FogLedger_FogMerkleProofAPIClientInterceptorFactoryProtocol? = nil
+    defaultHTTPCallOptions: HTTPCallOptions = HTTPCallOptions()
   ) {
-    self.channel = channel
-    self.defaultCallOptions = defaultCallOptions
-    self.interceptors = interceptors
+    self.defaultHTTPCallOptions = defaultHTTPCallOptions
   }
 }
 
 /// Usage: instantiate `FogLedger_FogKeyImageAPIClient`, then call methods of this protocol to make API calls.
 public protocol FogLedger_FogKeyImageAPIClientProtocol: HTTPClient {
   var serviceName: String { get }
-  var interceptors: FogLedger_FogKeyImageAPIClientInterceptorFactoryProtocol? { get }
 
   func auth(
     _ request: Attest_AuthMessage,
-    callOptions: CallOptions?
-  ) -> UnaryCall<Attest_AuthMessage, Attest_AuthMessage>
+    callOptions: HTTPCallOptions?
+  ) -> HTTPUnaryCall<Attest_AuthMessage, Attest_AuthMessage>
 
   func checkKeyImages(
     _ request: Attest_Message,
-    callOptions: CallOptions?
-  ) -> UnaryCall<Attest_Message, Attest_Message>
+    callOptions: HTTPCallOptions?
+  ) -> HTTPUnaryCall<Attest_Message, Attest_Message>
 }
 
 extension FogLedger_FogKeyImageAPIClientProtocol {
@@ -146,13 +125,12 @@ extension FogLedger_FogKeyImageAPIClientProtocol {
   /// - Returns: A `UnaryCall` with futures for the metadata, status and response.
   public func auth(
     _ request: Attest_AuthMessage,
-    callOptions: CallOptions? = nil
-  ) -> UnaryCall<Attest_AuthMessage, Attest_AuthMessage> {
+    callOptions: HTTPCallOptions? = nil
+  ) -> HTTPUnaryCall<Attest_AuthMessage, Attest_AuthMessage> {
     return self.makeUnaryCall(
       path: "/fog_ledger.FogKeyImageAPI/Auth",
       request: request,
-      callOptions: callOptions ?? self.defaultCallOptions,
-      interceptors: self.interceptors?.makeAuthInterceptors() ?? []
+      callOptions: callOptions ?? self.defaultHTTPCallOptions
     )
   }
 
@@ -164,57 +142,38 @@ extension FogLedger_FogKeyImageAPIClientProtocol {
   /// - Returns: A `UnaryCall` with futures for the metadata, status and response.
   public func checkKeyImages(
     _ request: Attest_Message,
-    callOptions: CallOptions? = nil
-  ) -> UnaryCall<Attest_Message, Attest_Message> {
+    callOptions: HTTPCallOptions? = nil
+  ) -> HTTPUnaryCall<Attest_Message, Attest_Message> {
     return self.makeUnaryCall(
       path: "/fog_ledger.FogKeyImageAPI/CheckKeyImages",
       request: request,
-      callOptions: callOptions ?? self.defaultCallOptions,
-      interceptors: self.interceptors?.makeCheckKeyImagesInterceptors() ?? []
+      callOptions: callOptions ?? self.defaultHTTPCallOptions
     )
   }
 }
 
-public protocol FogLedger_FogKeyImageAPIClientInterceptorFactoryProtocol {
-
-  /// - Returns: Interceptors to use when invoking 'auth'.
-  func makeAuthInterceptors() -> [ClientInterceptor<Attest_AuthMessage, Attest_AuthMessage>]
-
-  /// - Returns: Interceptors to use when invoking 'checkKeyImages'.
-  func makeCheckKeyImagesInterceptors() -> [ClientInterceptor<Attest_Message, Attest_Message>]
-}
-
 public final class FogLedger_FogKeyImageAPIClient: FogLedger_FogKeyImageAPIClientProtocol {
-  public let channel: GRPCChannel
-  public var defaultCallOptions: CallOptions
-  public var interceptors: FogLedger_FogKeyImageAPIClientInterceptorFactoryProtocol?
+  public var defaultHTTPCallOptions: HTTPCallOptions
 
   /// Creates a client for the fog_ledger.FogKeyImageAPI service.
   ///
   /// - Parameters:
-  ///   - channel: `GRPCChannel` to the service host.
-  ///   - defaultCallOptions: Options to use for each service call if the user doesn't provide them.
-  ///   - interceptors: A factory providing interceptors for each RPC.
+  ///   - defaultHTTPCallOptions: Options to use for each service call if the user doesn't provide them.
   public init(
-    channel: GRPCChannel,
-    defaultCallOptions: CallOptions = CallOptions(),
-    interceptors: FogLedger_FogKeyImageAPIClientInterceptorFactoryProtocol? = nil
+    defaultHTTPCallOptions: HTTPCallOptions = HTTPCallOptions()
   ) {
-    self.channel = channel
-    self.defaultCallOptions = defaultCallOptions
-    self.interceptors = interceptors
+    self.defaultHTTPCallOptions = defaultHTTPCallOptions
   }
 }
 
 /// Usage: instantiate `FogLedger_FogBlockAPIClient`, then call methods of this protocol to make API calls.
 public protocol FogLedger_FogBlockAPIClientProtocol: HTTPClient {
   var serviceName: String { get }
-  var interceptors: FogLedger_FogBlockAPIClientInterceptorFactoryProtocol? { get }
 
   func getBlocks(
     _ request: FogLedger_BlockRequest,
-    callOptions: CallOptions?
-  ) -> UnaryCall<FogLedger_BlockRequest, FogLedger_BlockResponse>
+    callOptions: HTTPCallOptions?
+  ) -> HTTPUnaryCall<FogLedger_BlockRequest, FogLedger_BlockResponse>
 }
 
 extension FogLedger_FogBlockAPIClientProtocol {
@@ -232,54 +191,38 @@ extension FogLedger_FogBlockAPIClientProtocol {
   /// - Returns: A `UnaryCall` with futures for the metadata, status and response.
   public func getBlocks(
     _ request: FogLedger_BlockRequest,
-    callOptions: CallOptions? = nil
-  ) -> UnaryCall<FogLedger_BlockRequest, FogLedger_BlockResponse> {
+    callOptions: HTTPCallOptions? = nil
+  ) -> HTTPUnaryCall<FogLedger_BlockRequest, FogLedger_BlockResponse> {
     return self.makeUnaryCall(
       path: "/fog_ledger.FogBlockAPI/GetBlocks",
       request: request,
-      callOptions: callOptions ?? self.defaultCallOptions,
-      interceptors: self.interceptors?.makeGetBlocksInterceptors() ?? []
+      callOptions: callOptions ?? self.defaultHTTPCallOptions
     )
   }
 }
 
-public protocol FogLedger_FogBlockAPIClientInterceptorFactoryProtocol {
-
-  /// - Returns: Interceptors to use when invoking 'getBlocks'.
-  func makeGetBlocksInterceptors() -> [ClientInterceptor<FogLedger_BlockRequest, FogLedger_BlockResponse>]
-}
-
 public final class FogLedger_FogBlockAPIClient: FogLedger_FogBlockAPIClientProtocol {
-  public let channel: GRPCChannel
-  public var defaultCallOptions: CallOptions
-  public var interceptors: FogLedger_FogBlockAPIClientInterceptorFactoryProtocol?
+  public var defaultHTTPCallOptions: HTTPCallOptions
 
   /// Creates a client for the fog_ledger.FogBlockAPI service.
   ///
   /// - Parameters:
-  ///   - channel: `GRPCChannel` to the service host.
-  ///   - defaultCallOptions: Options to use for each service call if the user doesn't provide them.
-  ///   - interceptors: A factory providing interceptors for each RPC.
+  ///   - defaultHTTPCallOptions: Options to use for each service call if the user doesn't provide them.
   public init(
-    channel: GRPCChannel,
-    defaultCallOptions: CallOptions = CallOptions(),
-    interceptors: FogLedger_FogBlockAPIClientInterceptorFactoryProtocol? = nil
+    defaultHTTPCallOptions: HTTPCallOptions = HTTPCallOptions()
   ) {
-    self.channel = channel
-    self.defaultCallOptions = defaultCallOptions
-    self.interceptors = interceptors
+    self.defaultHTTPCallOptions = defaultHTTPCallOptions
   }
 }
 
 /// Usage: instantiate `FogLedger_FogUntrustedTxOutApiClient`, then call methods of this protocol to make API calls.
 public protocol FogLedger_FogUntrustedTxOutApiClientProtocol: HTTPClient {
   var serviceName: String { get }
-  var interceptors: FogLedger_FogUntrustedTxOutApiClientInterceptorFactoryProtocol? { get }
 
   func getTxOuts(
     _ request: FogLedger_TxOutRequest,
-    callOptions: CallOptions?
-  ) -> UnaryCall<FogLedger_TxOutRequest, FogLedger_TxOutResponse>
+    callOptions: HTTPCallOptions?
+  ) -> HTTPUnaryCall<FogLedger_TxOutRequest, FogLedger_TxOutResponse>
 }
 
 extension FogLedger_FogUntrustedTxOutApiClientProtocol {
@@ -308,41 +251,26 @@ extension FogLedger_FogUntrustedTxOutApiClientProtocol {
   /// - Returns: A `UnaryCall` with futures for the metadata, status and response.
   public func getTxOuts(
     _ request: FogLedger_TxOutRequest,
-    callOptions: CallOptions? = nil
-  ) -> UnaryCall<FogLedger_TxOutRequest, FogLedger_TxOutResponse> {
+    callOptions: HTTPCallOptions? = nil
+  ) -> HTTPUnaryCall<FogLedger_TxOutRequest, FogLedger_TxOutResponse> {
     return self.makeUnaryCall(
       path: "/fog_ledger.FogUntrustedTxOutApi/GetTxOuts",
       request: request,
-      callOptions: callOptions ?? self.defaultCallOptions,
-      interceptors: self.interceptors?.makeGetTxOutsInterceptors() ?? []
+      callOptions: callOptions ?? self.defaultHTTPCallOptions
     )
   }
 }
 
-public protocol FogLedger_FogUntrustedTxOutApiClientInterceptorFactoryProtocol {
-
-  /// - Returns: Interceptors to use when invoking 'getTxOuts'.
-  func makeGetTxOutsInterceptors() -> [ClientInterceptor<FogLedger_TxOutRequest, FogLedger_TxOutResponse>]
-}
-
 public final class FogLedger_FogUntrustedTxOutApiClient: FogLedger_FogUntrustedTxOutApiClientProtocol {
-  public let channel: GRPCChannel
-  public var defaultCallOptions: CallOptions
-  public var interceptors: FogLedger_FogUntrustedTxOutApiClientInterceptorFactoryProtocol?
+  public var defaultHTTPCallOptions: HTTPCallOptions
 
   /// Creates a client for the fog_ledger.FogUntrustedTxOutApi service.
   ///
   /// - Parameters:
-  ///   - channel: `GRPCChannel` to the service host.
-  ///   - defaultCallOptions: Options to use for each service call if the user doesn't provide them.
-  ///   - interceptors: A factory providing interceptors for each RPC.
+  ///   - defaultHTTPCallOptions: Options to use for each service call if the user doesn't provide them.
   public init(
-    channel: GRPCChannel,
-    defaultCallOptions: CallOptions = CallOptions(),
-    interceptors: FogLedger_FogUntrustedTxOutApiClientInterceptorFactoryProtocol? = nil
+    defaultHTTPCallOptions: HTTPCallOptions = HTTPCallOptions()
   ) {
-    self.channel = channel
-    self.defaultCallOptions = defaultCallOptions
-    self.interceptors = interceptors
+    self.defaultHTTPCallOptions = defaultHTTPCallOptions
   }
 }
