@@ -57,12 +57,14 @@ public class HTTPRequester {
     let configuration : URLSessionConfiguration
     let baseUrl: URL
     let trustRoots: [NIOSSLCertificate]?
+    var challengeDelegate: URLSessionDelegate?
 
     public init(baseUrl: URL, trustRoots: [NIOSSLCertificate]?, configuration: URLSessionConfiguration = HTTPRequester.defaultConfiguration) {
         self.configuration = configuration
 //        self.baseUrl = URL(string:"/gw/", relativeTo: baseUrl)!
         self.baseUrl = baseUrl
         self.trustRoots = trustRoots
+        self.challengeDelegate = ConnectionSessionTrust(url: baseUrl, trustRoots: trustRoots ?? [])
     }
 }
 
@@ -78,8 +80,9 @@ extension HTTPRequester : Requester {
     
 //    public func makeRequest<T: HTTPClientCall>(call: T, completion: @escaping (Result<HttpCallResult<T.ResponsePayload>, Error>) -> Void) {
     public func makeRequest<T: HTTPClientCall>(call: T, completion: @escaping (HttpCallResult<T.ResponsePayload>) -> Void) {
-        let session = URLSession(configuration: configuration)
-        
+//        let session = URLSession(configuration: configuration, delegate: challengeDelegate, delegateQueue: .current)
+        let session = URLSession(configuration: configuration)// , delegate: challengeDelegate, delegateQueue: .current)
+
         guard let url = completeURLFromPath(call.path) else {
             // TODO move out of Requester ?
             completion(HttpCallResult(status: HTTPStatus(code: 1, message: "could not construct URL")))
