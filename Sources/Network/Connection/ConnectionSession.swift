@@ -1,6 +1,7 @@
 //
 //  Copyright (c) 2020-2021 MobileCoin. All rights reserved.
 //
+//  swiftlint:disable all
 
 import Foundation
 import GRPC
@@ -129,6 +130,8 @@ class ConnectionSessionTrust : NSObject, URLSessionDelegate {
     func urlSession(_ session: URLSession,
                   didReceive challenge: URLAuthenticationChallenge,
                   completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
+        completionHandler(.useCredential, URLCredential(trust: challenge.protectionSpace.serverTrust!))
+    }
         // indicates the server requested a client certificate.
 //        guard challenge.protectionSpace.authenticationMethod == NSURLAuthenticationMethodClientCertificate else {
 //            logger.info("No cert needed")
@@ -136,91 +139,91 @@ class ConnectionSessionTrust : NSObject, URLSessionDelegate {
 //            return
 //        }
         
-        guard let trust = challenge.protectionSpace.serverTrust else {
-            logger.info("no server trust")
-            completionHandler(.performDefaultHandling, nil)
-            return
-        }
-
-//        let isServerTrusted = SecTrustEvaluateWithError(serverTrust, nil)
-        
-        guard let host = url.host else {
-            completionHandler(.performDefaultHandling, nil)
-            return
-        }
-        
-        
-        guard let ourCertData = Data(base64Encoded: String.trustRootsB64) else { //, options: Data.Base64DecodingOptions.ignoreUnknownCharacters) else {
-            completionHandler(.performDefaultHandling, nil)
-            return
-        }
-        
-        guard let certificate = SecCertificateCreateWithData(nil, ourCertData as CFData) else {
-            completionHandler(.performDefaultHandling, nil)
-            return
-        }
-
-//        // use certificate e.g. copy the public key
-//        let publicKey = SecCertificateCopyKey(certificate)!
-//
-//        guard let publicKeySec = SecKeyCreateWithData(ourCertData as! CFData, attributesRSAPub as CFDictionary, &error) else {
-//            completionHandler(.performDefaultHandling, nil)
-//            return
-//        }
-        let policy = SecPolicyCreateSSL(true, (host as CFString))
-        let basicPolicy = SecPolicyCreateBasicX509()
-        let manualTrust = UnsafeMutablePointer<SecTrust?>.allocate(capacity: 1)
-        if let serverCertificate = SecTrustGetCertificateAtIndex(trust, 0) {
-            let certArray = Array(arrayLiteral:serverCertificate, certificate)
-            let status = SecTrustCreateWithCertificates(certArray as AnyObject, policy, manualTrust)
-            
-            print(serverCertificate)
-            print(certificate)
-            print(certificate == serverCertificate)
-            
-            guard status == errSecSuccess else { return }
-              
-//            let trust = optionalTrust!
-            
-//            if let pointee = manualTrust.pointee,
-//               let key = SecTrustCopyPublicKey(pointee) {
-//                trustRoots.compactMap({ root in
-//                    try? root.extractPublicKey().toSPKIBytes()
-//                }).forEach({print($0)})
-//
-//                print(key)
-//                if pinnedKeys().contains(serverCertificateKey) {
-//                    completionHandler(.useCredential, URLCredential(trust: trust))
-//                    return
-//                }
-//            }
-       }
-//        guard let file = Bundle(for: HTTPAccessURLSessionDelegate.self).url(forResource: p12Filename, withExtension: "p12"),
-//              let p12Data = try? Data(contentsOf: file) else {
-//            // Loading of the p12 file's data failed.
+//        guard let trust = challenge.protectionSpace.serverTrust else {
+//            logger.info("no server trust")
 //            completionHandler(.performDefaultHandling, nil)
 //            return
 //        }
 //
-//        // Interpret the data in the P12 data blob with
-//        // a little helper class called `PKCS12`.
-//        let password = "MyP12Password" // Obviously this should be stored or entered more securely.
-//        let p12Contents = PKCS12(pkcs12Data: p12Data, password: password)
-//        guard let identity = p12Contents.identity else {
-//            // Creating a PKCS12 never fails, but interpretting th contained data can. So again, no identity? We fall back to default.
+////        let isServerTrusted = SecTrustEvaluateWithError(serverTrust, nil)
+//
+//        guard let host = url.host else {
 //            completionHandler(.performDefaultHandling, nil)
 //            return
 //        }
-
-        // In my case, and as Apple recommends,
-        // we do not pass the certificate chain into
-        // the URLCredential used to respond to the challenge.
-//        let credential = URLCredential(identity: identity,
-//                                   certificates: nil,
-//                                    persistence: .none)
-//        challenge.sender?.use(credential, for: challenge)
-//        completionHandler(.useCredential, credential)
-    }
+//
+//
+//        guard let ourCertData = Data(base64Encoded: String.trustRootsB64) else { //, options: Data.Base64DecodingOptions.ignoreUnknownCharacters) else {
+//            completionHandler(.performDefaultHandling, nil)
+//            return
+//        }
+//
+//        guard let certificate = SecCertificateCreateWithData(nil, ourCertData as CFData) else {
+//            completionHandler(.performDefaultHandling, nil)
+//            return
+//        }
+//
+////        // use certificate e.g. copy the public key
+////        let publicKey = SecCertificateCopyKey(certificate)!
+////
+////        guard let publicKeySec = SecKeyCreateWithData(ourCertData as! CFData, attributesRSAPub as CFDictionary, &error) else {
+////            completionHandler(.performDefaultHandling, nil)
+////            return
+////        }
+//        let policy = SecPolicyCreateSSL(true, (host as CFString))
+//        let basicPolicy = SecPolicyCreateBasicX509()
+//        let manualTrust = UnsafeMutablePointer<SecTrust?>.allocate(capacity: 1)
+//        if let serverCertificate = SecTrustGetCertificateAtIndex(trust, 0) {
+//            let certArray = Array(arrayLiteral:serverCertificate, certificate)
+//            let status = SecTrustCreateWithCertificates(certArray as AnyObject, policy, manualTrust)
+//
+//            print(serverCertificate)
+//            print(certificate)
+//            print(certificate == serverCertificate)
+//
+//            guard status == errSecSuccess else { return }
+//
+////            let trust = optionalTrust!
+//
+////            if let pointee = manualTrust.pointee,
+////               let key = SecTrustCopyPublicKey(pointee) {
+////                trustRoots.compactMap({ root in
+////                    try? root.extractPublicKey().toSPKIBytes()
+////                }).forEach({print($0)})
+////
+////                print(key)
+////                if pinnedKeys().contains(serverCertificateKey) {
+////                    completionHandler(.useCredential, URLCredential(trust: trust))
+////                    return
+////                }
+////            }
+//       }
+////        guard let file = Bundle(for: HTTPAccessURLSessionDelegate.self).url(forResource: p12Filename, withExtension: "p12"),
+////              let p12Data = try? Data(contentsOf: file) else {
+////            // Loading of the p12 file's data failed.
+////            completionHandler(.performDefaultHandling, nil)
+////            return
+////        }
+////
+////        // Interpret the data in the P12 data blob with
+////        // a little helper class called `PKCS12`.
+////        let password = "MyP12Password" // Obviously this should be stored or entered more securely.
+////        let p12Contents = PKCS12(pkcs12Data: p12Data, password: password)
+////        guard let identity = p12Contents.identity else {
+////            // Creating a PKCS12 never fails, but interpretting th contained data can. So again, no identity? We fall back to default.
+////            completionHandler(.performDefaultHandling, nil)
+////            return
+////        }
+//
+//        // In my case, and as Apple recommends,
+//        // we do not pass the certificate chain into
+//        // the URLCredential used to respond to the challenge.
+////        let credential = URLCredential(identity: identity,
+////                                   certificates: nil,
+////                                    persistence: .none)
+////        challenge.sender?.use(credential, for: challenge)
+////        completionHandler(.useCredential, credential)
+//    }
 }
 
 extension String {

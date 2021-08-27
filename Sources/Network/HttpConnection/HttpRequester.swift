@@ -104,6 +104,7 @@ extension HTTPRequester : Requester {
         request.addProtoHeaders()
         request.addHeaders(call.options?.headers ?? [:])
 
+        logger.debug("all headers: \(request.allHTTPHeaderFields)")
         do {
             request.httpBody = try call.requestPayload?.serializedData() ?? Google_Protobuf_Empty().serializedData()
             logger.debug("MC HTTP Request: \(call.requestPayload?.prettyPrintJSON() ?? "")")

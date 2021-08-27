@@ -108,7 +108,7 @@ extension NetworkPreset {
             return "mc://node1.test.mobilecoin.com"
 
         case .alpha, .mobiledev, .master, .build, .demo, .diogenes, .drakeley, .eran:
-            return "mc://consensus.\(self).mobilecoin.com"
+            return "mc://node1.\(self).mobilecoin.com"
         }
     }
     var fogUrl: String {
