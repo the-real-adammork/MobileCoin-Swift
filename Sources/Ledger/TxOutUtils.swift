@@ -110,6 +110,8 @@ enum TxOutUtils {
         viewPrivateKey: RistrettoPrivate
     ) -> UInt64? {
         commitment.asMcBuffer { commitmentPtr in
+            // TODO change how we build McTxOutAmount
+//            mc_get_t
             var mcAmount = McTxOutAmount(commitment: commitmentPtr, masked_value: maskedValue)
             return publicKey.asMcBuffer { publicKeyPtr in
                 viewPrivateKey.asMcBuffer { viewKeyBufferPtr in

@@ -55,12 +55,16 @@ extension PartialTxOut {
     }
 
     init?(_ txOutRecord: FogView_TxOutRecord) {
-        guard let commitment = Data32(txOutRecord.txOutAmountCommitmentData),
-              let targetKey = RistrettoPublic(txOutRecord.txOutTargetKeyData),
+        let commitment = Data32(txOutRecord.txOutAmountCommitmentData) ?? Data32()
+        if Data32(txOutRecord.txOutAmountCommitmentData) == nil {
+            logger.warning("txOutAmountCommitmentData nil")
+        }
+        guard let targetKey = RistrettoPublic(txOutRecord.txOutTargetKeyData),
               let publicKey = RistrettoPublic(txOutRecord.txOutPublicKeyData)
         else {
             return nil
         }
+        
         self.init(
             commitment: commitment,
             maskedValue: txOutRecord.txOutAmountMaskedValue,
