@@ -111,6 +111,10 @@ enum TxOutUtils {
     ) -> UInt64? {
         commitment.asMcBuffer { commitmentPtr in
             // TODO change how we build McTxOutAmount
+            // - Create McTxOutAmount with the shared secret instead of the commitment data
+            //          - create shared secret from viewPrivateKey, and txOutPublicKey
+            //          - ^ Add new functon to libmobilecoin.a for thie above
+            // 
 //            mc_get_t
             var mcAmount = McTxOutAmount(commitment: commitmentPtr, masked_value: maskedValue)
             return publicKey.asMcBuffer { publicKeyPtr in
