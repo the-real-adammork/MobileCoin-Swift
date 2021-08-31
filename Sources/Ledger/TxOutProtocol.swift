@@ -57,16 +57,16 @@ extension TxOutProtocol {
     }
 }
 
-extension FogView_FogTxOut {
-    init(_ txOut: TxOutProtocol) {
-        self.init()
-        self.amount =
-            External_Amount(commitment: txOut.commitment, maskedValue: txOut.maskedValue)
-        self.targetKey = External_CompressedRistretto(txOut.targetKey)
-        self.publicKey = External_CompressedRistretto(txOut.publicKey)
-    }
-}
-
+//extension FogView_FogTxOut {
+//    init(_ txOut: TxOutProtocol) {
+//        self.init()
+//        self.amount =
+//            External_Amount(commitment: txOut.commitment, maskedValue: txOut.maskedValue)
+//        self.targetKey = External_CompressedRistretto(txOut.targetKey)
+//        self.publicKey = External_CompressedRistretto(txOut.publicKey)
+//    }
+//}
+//
 extension FogView_TxOutRecord {
     init(_ txOut: TxOutProtocol) {
         self.init()
