@@ -78,7 +78,6 @@ public struct Receipt {
 
     func unmaskValue(accountKey: AccountKey) -> Result<UInt64, InvalidInputError> {
         guard let value = TxOutUtils.value(
-            commitment: commitment,
             maskedValue: maskedValue,
             publicKey: txOutPublicKeyTyped,
             viewPrivateKey: accountKey.viewPrivateKey)
@@ -103,7 +102,6 @@ public struct Receipt {
         }
 
         guard let value = TxOutUtils.value(
-                commitment: commitment,
                 maskedValue: maskedValue,
                 publicKey: txOutPublicKeyTyped,
                 viewPrivateKey: accountKey.viewPrivateKey)
