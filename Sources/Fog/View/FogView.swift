@@ -182,7 +182,7 @@ extension LedgerTxOut {
     fileprivate static func make(txOutRecord: FogView_TxOutRecord, viewKey: RistrettoPrivate)
         -> Result<LedgerTxOut, ConnectionError>
     {
-        guard let ledgerTxOut = LedgerTxOut(txOutRecord) else {
+        guard let ledgerTxOut = LedgerTxOut(txOutRecord, viewKey: viewKey) else {
             let errorMessage = "Invalid TxOut returned from Fog View. TxOutRecord: " +
                 "\(redacting: txOutRecord.serializedDataInfallible.base64EncodedString())"
             logger.error(errorMessage)

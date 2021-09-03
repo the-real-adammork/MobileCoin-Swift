@@ -21,7 +21,7 @@ struct NetworkConfig {
 
     private let attestation: AttestationConfig
 
-    var transportProtocol: TransportProtocol = .grpc
+    var transportProtocol: TransportProtocol = .http
 
     var consensusTrustRoots: [NIOSSLCertificate]?
     var fogTrustRoots: [NIOSSLCertificate]?

@@ -16,13 +16,20 @@ struct KnownTxOut: TxOutProtocol {
         else {
             return nil
         }
+        
+        
+        guard let commitment = TxOutUtils.sharedSecret(publicKey: ledgerTxOut.publicKey, viewPrivateKey:accountKey.viewPrivateKey) else {
+            return nil
+        }
+        logger.warning("self.commitment: \n\n\(commitment.data.hexEncodedString(options: Data.HexEncodingOptions.upperCase))\n")
+        self.commitment = commitment.data32
 
         self.ledgerTxOut = ledgerTxOut
         self.value = value
         self.keyImage = keyImage
     }
 
-    var commitment: Data32 { ledgerTxOut.commitment }
+    var commitment: Data32
     var maskedValue: UInt64 { ledgerTxOut.maskedValue }
     var targetKey: RistrettoPublic { ledgerTxOut.targetKey }
     var publicKey: RistrettoPublic { ledgerTxOut.publicKey }

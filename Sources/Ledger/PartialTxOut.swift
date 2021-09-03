@@ -54,19 +54,21 @@ extension PartialTxOut {
 //            publicKey: publicKey)
 //    }
 //
-    init?(_ txOutRecord: FogView_TxOutRecord) {
-        let commitment = Data32(txOutRecord.txOutAmountCommitmentData) ?? Data32()
-        if Data32(txOutRecord.txOutAmountCommitmentData) == nil {
-            logger.warning("txOutAmountCommitmentData nil")
-        }
+    init?(_ txOutRecord: FogView_TxOutRecord, viewKey: RistrettoPrivate) {
+//        let commitment = Data32(txOutRecord.txOutAmountCommitmentData) ?? Data32()
         guard let targetKey = RistrettoPublic(txOutRecord.txOutTargetKeyData),
               let publicKey = RistrettoPublic(txOutRecord.txOutPublicKeyData)
         else {
             return nil
         }
-        
+       
+        guard let commitment = TxOutUtils.sharedSecret(publicKey: publicKey, viewPrivateKey: viewKey) else {
+            logger.warning(" nil")
+            return nil
+        }
+        logger.info(commitment.description)
         self.init(
-            commitment: commitment,
+            commitment: commitment.data32,
             maskedValue: txOutRecord.txOutAmountMaskedValue,
             targetKey: targetKey,
             publicKey: publicKey)
