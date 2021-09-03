@@ -8,7 +8,7 @@ public protocol HttpCallable {
     associatedtype Request
     associatedtype Response
     
-    var requester: HTTPRequester { get } //TODO change to requester protocol
+    var requester: RestApiRequester { get }
     
     func call(
         request: Request,

@@ -29,18 +29,18 @@ extension AttestedHttpConnectionError: CustomStringConvertible {
 }
 
 class AttestedHttpConnection: ConnectionProtocol {
-    private let requester: HTTPRequester
+    private let requester: RestApiRequester
     private let inner: SerialCallbackLock<Inner>
 
     init(
         client: AttestableHttpClient,
-        requester: HTTPRequester,
+        requester: RestApiRequester,
         config: AttestedConnectionConfigProtocol,
         targetQueue: DispatchQueue?,
         rng: (@convention(c) (UnsafeMutableRawPointer?) -> UInt64)? = securityRNG,
         rngContext: Any? = nil
     ) {
-        let inner = Inner(client: client, config: config, rng: rng, rngContext: rngContext)
+        let inner = Inner(client: client, requester: requester, config: config, rng: rng, rngContext: rngContext)
         self.requester = requester
         self.inner = .init(inner, targetQueue: targetQueue)
     }
@@ -114,7 +114,7 @@ extension AttestedHttpConnection {
         private let url: MobileCoinUrlProtocol
         private let session: ConnectionSession
         private let client: AttestableHttpClient
-        private let requester: HTTPRequester
+        private let requester: RestApiRequester
         private let attestAke: AttestAke
 
         private let responderId: String
@@ -124,6 +124,7 @@ extension AttestedHttpConnection {
 
         init(
             client: AttestableHttpClient,
+            requester: RestApiRequester,
             config: AttestedConnectionConfigProtocol,
             rng: (@convention(c) (UnsafeMutableRawPointer?) -> UInt64)? = securityRNG,
             rngContext: Any? = nil
@@ -131,7 +132,7 @@ extension AttestedHttpConnection {
             self.url = config.url
             self.session = ConnectionSession(config: config)
             self.client = client
-            self.requester = HTTPRequester(baseUrl: config.url.httpBasedUrl, trustRoots: config.trustRoots)
+            self.requester = requester
             self.attestAke = AttestAke()
             self.responderId = config.url.responderId
             self.attestationVerifier = AttestationVerifier(attestation: config.attestation)
@@ -337,7 +338,6 @@ extension AttestedHttpConnection {
         }
 
         private func requestCallOptions() -> HTTPCallOptions {
-            logger.debug(session.requestHeaders.debugDescription)
             return HTTPCallOptions(headers: session.requestHeaders)
         }
 
@@ -359,8 +359,8 @@ extension AttestedHttpConnection {
                                     .connectionFailure("url: \(url), status: \(callResult.status.code)")))
             }
             
-            if let initialMetadata = callResult.initialMetadata {
-                session.processResponse(headers: initialMetadata.allHeaderFields)
+            if let metadata = callResult.metadata {
+                session.processResponse(headers: metadata.allHeaderFields)
             }
 
             return .success(response)

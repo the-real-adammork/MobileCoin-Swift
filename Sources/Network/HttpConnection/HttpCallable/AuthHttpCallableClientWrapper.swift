@@ -60,7 +60,7 @@ struct AuthHttpCallableClientWrapper<WrappedClient:HTTPClient & AuthHttpCallee>:
     }
     
     let client : WrappedClient
-    let requester: HTTPRequester
+    let requester: RestApiRequester
 
     func auth(_ request: Attest_AuthMessage, callOptions: HTTPCallOptions?)
     -> HTTPUnaryCall<Attest_AuthMessage, Attest_AuthMessage> {

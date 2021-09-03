@@ -309,26 +309,40 @@ extension NetworkPreset {
 }
 
 final class TestHttpRequester: HttpRequester {
+    let configuration : URLSessionConfiguration = {
+        let config = URLSessionConfiguration.default
+        config.timeoutIntervalForRequest = 30
+        config.timeoutIntervalForResource = 30
+        return config
+    }()
+    
     func request(
         url: URL,
         method: HTTPMethod,
         headers: [String: String]?,
         body: Data?,
-        completion: @escaping (HTTPResult) -> Void
+        completion: @escaping (Result<HTTPResponse, Error>) -> Void
     ) {
-        let task = URLSession.shared.dataTask(with: url) {data, response, error in
+        var request = URLRequest(url: url.absoluteURL)
+        request.httpMethod = method.rawValue
+        headers?.forEach({ key, value in
+            request.setValue(value, forHTTPHeaderField: key)
+        })
+
+        request.httpBody = body
+
+        let session = URLSession(configuration: configuration)
+        let task = session.dataTask(with: request) {data, response, error in
             if let error = error {
-                completion(.failure(error: error))
+                completion(.failure(error))
                 return
             }
-            guard let response = response as? HTTPURLResponse,
-            (200...299).contains(response.statusCode) else {
-                completion(.failure(error: ConnectionError.invalidServerResponse("")))
+            guard let response = response as? HTTPURLResponse else {
+                completion(.failure(ConnectionError.invalidServerResponse("No Response")))
                 return
             }
             let httpResponse = HTTPResponse(httpUrlResponse: response, responseData: data)
-            completion(.success(response: httpResponse))
-
+            completion(.success(httpResponse))
         }
         task.resume()
     }

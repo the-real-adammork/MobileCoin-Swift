@@ -30,7 +30,7 @@ struct NetworkConfig {
     var fogUserAuthorization: BasicCredentials?
 
     var httpRequester: HttpRequester?
-
+    
     init(consensusUrl: ConsensusUrl, fogUrl: FogUrl, attestation: AttestationConfig) {
         self.consensusUrl = consensusUrl
         self.fogUrl = fogUrl

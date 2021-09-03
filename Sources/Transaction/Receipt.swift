@@ -64,8 +64,8 @@ public struct Receipt {
     }
 
     func matchesTxOut(_ txOut: TxOutProtocol) -> Bool {
-        print("self.commitment: \n\n\(commitment.hexEncodedString(options: Data32.HexEncodingOptions.upperCase))\n")
-        print("txOut: \n\n\(txOut.commitment.hexEncodedString(options: Data32.HexEncodingOptions.upperCase))\n")
+        logger.debug("self.commitment: \n\n\(commitment.hexEncodedString(options: Data32.HexEncodingOptions.upperCase))\n")
+        logger.debug("txOut: \n\n\(txOut.commitment.hexEncodedString(options: Data32.HexEncodingOptions.upperCase))\n")
         return txOutPublicKeyTyped == txOut.publicKey
             && commitment == txOut.commitment
             && maskedValue == txOut.maskedValue

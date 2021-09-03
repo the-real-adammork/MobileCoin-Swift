@@ -34,6 +34,7 @@ extension FogReportConnectionIntTests {
             url: url,
             transportProtocolOption: .http,
             channelManager: GrpcChannelManager(),
+            httpRequester: TestHttpRequester(),
             targetQueue: DispatchQueue.main)
     }
 }

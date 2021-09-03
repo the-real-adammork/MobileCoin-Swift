@@ -7,17 +7,16 @@ import LibMobileCoin
 
 final class FogViewHttpConnection: AttestedHttpConnection, FogViewService {
     private let client: AuthHttpCallableClientWrapper<FogView_FogViewAPIRestClient>
-    private let requester : HTTPRequester
+    private let requester : RestApiRequester
 
     init(
         config: AttestedConnectionConfig<FogUrl>,
-        requester: HTTPRequester? = nil,
+        requester: RestApiRequester,
         targetQueue: DispatchQueue?,
         rng: (@convention(c) (UnsafeMutableRawPointer?) -> UInt64)? = securityRNG,
         rngContext: Any? = nil
     ) {
-        // Solve for shared channel on GRPC side TLS - Certificates
-        self.requester = HTTPRequester(baseUrl: config.url.httpBasedUrl, trustRoots: config.trustRoots)
+        self.requester = requester
         self.client = AuthHttpCallableClientWrapper(client: FogView_FogViewAPIRestClient(), requester: self.requester)
         super.init(
             client: self.client,
@@ -48,7 +47,7 @@ extension FogViewHttpConnection {
         typealias InnerResponse = FogView_QueryResponse
 
         let client: AuthHttpCallableClientWrapper<FogView_FogViewAPIRestClient>
-        let requester: HTTPRequester
+        let requester: RestApiRequester
 
         func call(
             request: Attest_Message,

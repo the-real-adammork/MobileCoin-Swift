@@ -7,16 +7,16 @@ import LibMobileCoin
 
 final class FogMerkleProofHttpConnection: AttestedHttpConnection, FogMerkleProofService {
     private let client: AuthHttpCallableClientWrapper<FogLedger_FogMerkleProofAPIRestClient>
-    private let requester : HTTPRequester
+    private let requester : RestApiRequester
 
     init(
         config: AttestedConnectionConfig<FogUrl>,
-        requester: HTTPRequester? = nil,
+        requester: RestApiRequester,
         targetQueue: DispatchQueue?,
         rng: (@convention(c) (UnsafeMutableRawPointer?) -> UInt64)? = securityRNG,
         rngContext: Any? = nil
     ) {
-        self.requester = HTTPRequester(baseUrl: config.url.httpBasedUrl, trustRoots: config.trustRoots)
+        self.requester = requester
         self.client = AuthHttpCallableClientWrapper(client:FogLedger_FogMerkleProofAPIRestClient(), requester: self.requester)
         super.init(
             client: self.client,
@@ -44,7 +44,7 @@ extension FogMerkleProofHttpConnection {
         typealias InnerResponse = FogLedger_GetOutputsResponse
 
         let client: AuthHttpCallableClientWrapper<FogLedger_FogMerkleProofAPIRestClient>
-        let requester: HTTPRequester
+        let requester: RestApiRequester
 
         func call(
             request: Attest_Message,

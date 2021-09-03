@@ -14,7 +14,7 @@ public protocol HttpRequester {
         method: HTTPMethod,
         headers: [String: String]?,
         body: Data?,
-        completion: @escaping (HTTPResult) -> Void)
+        completion: @escaping (Result<HTTPResponse, Error>) -> Void)
 }
 
 public enum HTTPMethod : String {
@@ -39,29 +39,17 @@ public struct HTTPResponse {
     }
 }
 
-public enum HTTPResult {
-    case success(response: HTTPResponse)
-    case failure(error: Error)
-}
-
 // - Add relative path component toe NetworkedMessage and then combine at runtime.
 
-public class HTTPRequester {
-    public static let defaultConfiguration : URLSessionConfiguration = {
-        let config = URLSessionConfiguration.default
-        config.timeoutIntervalForRequest = 30
-        config.timeoutIntervalForResource = 30
-        return config
-    }()
-
-    let configuration : URLSessionConfiguration
+public class RestApiRequester {
+    let requester: HttpRequester
     let baseUrl: URL
     let trustRoots: [NIOSSLCertificate]?
+    let prefix: String = "gw"
     var challengeDelegate: URLSessionDelegate?
 
-    public init(baseUrl: URL, trustRoots: [NIOSSLCertificate]?, configuration: URLSessionConfiguration = HTTPRequester.defaultConfiguration) {
-        self.configuration = configuration
-//        self.baseUrl = URL(string:"/gw/", relativeTo: baseUrl)!
+    public init(requester: HttpRequester, baseUrl: URL, trustRoots: [NIOSSLCertificate]? = []) {
+        self.requester = requester
         self.baseUrl = baseUrl
         self.trustRoots = trustRoots
         self.challengeDelegate = ConnectionSessionTrust(url: baseUrl, trustRoots: trustRoots ?? [])
@@ -69,80 +57,66 @@ public class HTTPRequester {
 }
 
 public protocol Requester {
-//    func makeRequest<T: HTTPClientCall>(call: T, completion: @escaping (Result<T.ResponsePayload, Error>) -> Void)
     func makeRequest<T: HTTPClientCall>(call: T, completion: @escaping (HttpCallResult<T.ResponsePayload>) -> Void)
 }
 
-extension HTTPRequester : Requester {
-    private func completeURLFromPath(_ path: String) -> URL? {
-        URL(string: "/gw\(path)", relativeTo: baseUrl)
+extension RestApiRequester : Requester {
+    private func completeURL(path: String) -> URL? {
+        .prefix(baseUrl, pathComponents:[prefix, path])
     }
     
-//    public func makeRequest<T: HTTPClientCall>(call: T, completion: @escaping (Result<HttpCallResult<T.ResponsePayload>, Error>) -> Void) {
     public func makeRequest<T: HTTPClientCall>(call: T, completion: @escaping (HttpCallResult<T.ResponsePayload>) -> Void) {
-//        let session = URLSession(configuration: configuration, delegate: challengeDelegate, delegateQueue: .current)
-        let session = URLSession(configuration: configuration)// , delegate: challengeDelegate, delegateQueue: .current)
-
-        guard let url = completeURLFromPath(call.path) else {
-            // TODO move out of Requester ?
+        guard let url = completeURL(path: call.path) else {
             completion(HttpCallResult(status: HTTPStatus(code: 1, message: "could not construct URL")))
             return
         }
-        logger.debug("completeURLFromPath: \(url.debugDescription)")
-        logger.debug("absoluteURL: \(url.absoluteURL.debugDescription)")
-        
-        
-        /*
-         - Convert all service files that rely on HTTPConnection, fix using integration tests
-         - Port AttestedHTTPConnection, fix using integration tests
-         - Cleanup code, tighten up solution.
-         - Add requester requirement to HTTPCallable, AuthHTTPCallable
-         - Add requester requirement to HTTPConnection, AttestableHTTPConnection
-         */
+
         var request = URLRequest(url: url.absoluteURL)
-        request.httpMethod = call.method.rawValue
         request.addProtoHeaders()
         request.addHeaders(call.options?.headers ?? [:])
 
-        logger.debug("all headers: \(request.allHTTPHeaderFields)")
         do {
-            request.httpBody = try call.requestPayload?.serializedData() ?? Google_Protobuf_Empty().serializedData()
-            logger.debug("MC HTTP Request: \(call.requestPayload?.prettyPrintJSON() ?? "")")
+            request.httpBody = try call.requestPayload?.serializedData()
         } catch let error {
-            logger.debug(error.localizedDescription)
             completion(HttpCallResult(status: HTTPStatus(code: 1, message: error.localizedDescription)))
         }
 
-        session.dataTask(with: request) { data, response, error in
-            if let error = error {
+        requester.request(url: url, method: call.method, headers: request.allHTTPHeaderFields, body: request.httpBody) { result in
+            switch result {
+            case .failure(let error):
                 completion(HttpCallResult(status: HTTPStatus(code: 1, message: error.localizedDescription)))
-                return
-            }
-            
-            guard let response = response as? HTTPURLResponse else {
-                completion(HttpCallResult(status: HTTPStatus(code: 1, message: "No response object")))
-                return
-            }
-            
-            logger.debug("HTTPURLResponse debug:")
-            logger.debug(response.debugDescription)
+            case .success(let httpResponse):
+                let response = httpResponse.httpUrlResponse
 
-            let responsePayload : T.ResponsePayload? = {
-                guard let data = data,
-                      let responsePayload = try? T.ResponsePayload.init(serializedData: data)
-                else {
-                    logger.debug("Response proto is empty or no data")
-                    return nil
-                }
-                logger.debug("Resposne Proto as JSON: \((try? responsePayload.jsonString()) ?? "Unable to print JSON")")
-                return responsePayload
-            }()
+                logger.info("Http Request url: \(url)")
+                logger.info("Status code: \(response.statusCode)")
+                
+                let responsePayload : T.ResponsePayload? = {
+                    guard let data = httpResponse.responseData,
+                          let responsePayload = try? T.ResponsePayload.init(serializedData: data)
+                    else {
+                        return nil
+                    }
+                    return responsePayload
+                }()
 
-            let result = HttpCallResult(status: HTTPStatus(code: response.statusCode, message: ""), initialMetadata: response, response: responsePayload)
-            completion(result)
-        }.resume()
+                let result = HttpCallResult(status: HTTPStatus(code: response.statusCode, message: ""), metadata: response, response: responsePayload)
+                completion(result)
+            }
+        }
     }
     
+}
+
+fileprivate extension URL {
+    static func prefix(_ url: URL, pathComponents: [String]) -> URL? {
+        let prunedComponents = pathComponents.map({ $0.hasPrefix("/") ? String($0.dropFirst()) : $0})
+        var components = URLComponents()
+        components.scheme = url.scheme
+        components.host = url.host
+        components.path = "/" + (url.pathComponents + prunedComponents).joined(separator: "/")
+        return components.url
+    }
 }
 
 fileprivate extension URLRequest {

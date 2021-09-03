@@ -17,6 +17,7 @@ final class FogReportConnection:
         url: FogUrl,
         transportProtocolOption: TransportProtocol.Option,
         channelManager: GrpcChannelManager,
+        httpRequester: HttpRequester?,
         targetQueue: DispatchQueue?
     ) {
         self.url = url
@@ -33,8 +34,12 @@ final class FogReportConnection:
                             channelManager: channelManager,
                             targetQueue: targetQueue))
                 case .http:
+                    guard let requester = httpRequester else {
+                        logger.fatalError("Transport Protocol is .http but no HttpRequester provided")
+                    }
                     return .http(httpService: FogReportHttpConnection(
                                     url: url,
+                                    requester: RestApiRequester(requester: requester, baseUrl: url.httpBasedUrl),
                                     targetQueue: targetQueue))
                 }
             },

@@ -8,16 +8,16 @@ import LibMobileCoin
 
 final class FogKeyImageHttpConnection: AttestedHttpConnection, FogKeyImageService {
     private let client: AuthHttpCallableClientWrapper<FogLedger_FogKeyImageAPIRestClient>
-    private let requester : HTTPRequester
+    private let requester : RestApiRequester
 
     init(
         config: AttestedConnectionConfig<FogUrl>,
-        requester: HTTPRequester? = nil,
+        requester: RestApiRequester,
         targetQueue: DispatchQueue?,
         rng: (@convention(c) (UnsafeMutableRawPointer?) -> UInt64)? = securityRNG,
         rngContext: Any? = nil
     ) {
-        self.requester = HTTPRequester(baseUrl: config.url.httpBasedUrl, trustRoots: config.trustRoots)
+        self.requester = requester
         self.client = AuthHttpCallableClientWrapper(client: FogLedger_FogKeyImageAPIRestClient(), requester: self.requester)
         super.init(
             client: self.client,
@@ -45,7 +45,7 @@ extension FogKeyImageHttpConnection {
         typealias InnerResponse = FogLedger_CheckKeyImagesResponse
 
         let client: AuthHttpCallableClientWrapper<FogLedger_FogKeyImageAPIRestClient>
-        let requester: HTTPRequester
+        let requester: RestApiRequester
 
         func call(
             request: Attest_Message,

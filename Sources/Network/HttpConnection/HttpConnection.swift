@@ -89,8 +89,8 @@ extension HttpConnection {
                 return .failure(.connectionFailure("url: \(url), status: \(callResult.status)"))
             }
 
-            if let initialMetadata = callResult.initialMetadata {
-                session.processResponse(headers: initialMetadata.allHeaderFields)
+            if let metadata = callResult.metadata {
+                session.processResponse(headers: metadata.allHeaderFields)
             }
 
             return .success(response)

@@ -63,10 +63,9 @@ extension PartialTxOut {
         }
        
         guard let commitment = TxOutUtils.sharedSecret(publicKey: publicKey, viewPrivateKey: viewKey) else {
-            logger.warning(" nil")
+            logger.warning("nil")
             return nil
         }
-        logger.info(commitment.description)
         self.init(
             commitment: commitment.data32,
             maskedValue: txOutRecord.txOutAmountMaskedValue,

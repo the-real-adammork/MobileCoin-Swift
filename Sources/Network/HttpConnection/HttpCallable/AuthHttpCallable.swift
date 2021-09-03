@@ -7,7 +7,7 @@ import GRPC
 import LibMobileCoin
 
 protocol AuthHttpCallable {
-    var requester: HTTPRequester { get }
+    var requester: RestApiRequester { get }
     
     func auth(
         _ request: Attest_AuthMessage,
@@ -44,11 +44,8 @@ protocol CheckKeyImagesCallee {
 }
 
 struct AuthHttpCallableWrapper: HttpCallable {
-//    typealias Request = Attest_AuthMessage
-//    typealias Response = Attest_AuthMessage
-    
     let authCallable: AuthHttpCallable
-    let requester: HTTPRequester
+    let requester: RestApiRequester
 
     func call(
         request: Attest_AuthMessage,

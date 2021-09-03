@@ -18,6 +18,7 @@ final class FogKeyImageConnection:
     init(
         config: AttestedConnectionConfig<FogUrl>,
         channelManager: GrpcChannelManager,
+        httpRequester: HttpRequester?,
         targetQueue: DispatchQueue?,
         rng: (@convention(c) (UnsafeMutableRawPointer?) -> UInt64)? = securityRNG,
         rngContext: Any? = nil
@@ -40,8 +41,12 @@ final class FogKeyImageConnection:
                             rng: rng,
                             rngContext: rngContext))
                 case .http:
+                    guard let requester = httpRequester else {
+                        logger.fatalError("Transport Protocol is .http but no HttpRequester provided")
+                    }
                     return .http(httpService: FogKeyImageHttpConnection(
                                     config: config,
+                                    requester: RestApiRequester(requester: requester, baseUrl:config.url.httpBasedUrl),
                                     targetQueue: targetQueue,
                                     rng: rng,
                                     rngContext: rngContext))

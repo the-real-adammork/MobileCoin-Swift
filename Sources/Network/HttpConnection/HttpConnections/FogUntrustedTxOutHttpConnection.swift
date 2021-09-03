@@ -7,15 +7,15 @@ import LibMobileCoin
 
 final class FogUntrustedTxOutHttpConnection: HttpConnection, FogUntrustedTxOutService {
     private let client: FogLedger_FogUntrustedTxOutApiRestClient
-    private let requester : HTTPRequester
+    private let requester : RestApiRequester
 
     init(
         config: ConnectionConfig<FogUrl>,
-        requester: HTTPRequester? = nil,
+        requester: RestApiRequester,
         targetQueue: DispatchQueue?
     ) {
         self.client = FogLedger_FogUntrustedTxOutApiRestClient()
-        self.requester = HTTPRequester(baseUrl: config.url.httpBasedUrl, trustRoots: config.trustRoots)
+        self.requester = requester
         super.init(config: config, targetQueue: targetQueue)
     }
 
@@ -30,7 +30,7 @@ final class FogUntrustedTxOutHttpConnection: HttpConnection, FogUntrustedTxOutSe
 extension FogUntrustedTxOutHttpConnection {
     private struct GetTxOutsCall: HttpCallable {
         let client: FogLedger_FogUntrustedTxOutApiRestClient
-        let requester: HTTPRequester
+        let requester: RestApiRequester
 
         func call(
             request: FogLedger_TxOutRequest,

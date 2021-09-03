@@ -7,17 +7,17 @@ import LibMobileCoin
 
 final class ConsensusHttpConnection: AttestedHttpConnection, ConsensusService {
     private let client: ConsensusClient_ConsensusClientAPIRestClient
-    private let requester: HTTPRequester
+    private let requester: RestApiRequester
 
     init(
         config: AttestedConnectionConfig<ConsensusUrl>,
-        requester: HTTPRequester? = nil,
+        requester: RestApiRequester,
         targetQueue: DispatchQueue?,
         rng: (@convention(c) (UnsafeMutableRawPointer?) -> UInt64)? = securityRNG,
         rngContext: Any? = nil
     ) {
         // Solve for shared channel TLS/Certs
-        self.requester = HTTPRequester(baseUrl: config.url.httpBasedUrl, trustRoots: config.trustRoots)
+        self.requester = requester
         self.client = ConsensusClient_ConsensusClientAPIRestClient()
         super.init(
             client: AuthHttpCallableClientWrapper(client: Attest_AttestedApiRestClient(), requester: self.requester),
@@ -45,7 +45,7 @@ extension ConsensusHttpConnection {
         typealias InnerResponse = ConsensusCommon_ProposeTxResponse
 
         let client: ConsensusClient_ConsensusClientAPIRestClient
-        let requester: HTTPRequester
+        let requester: RestApiRequester
 
 
         func call(

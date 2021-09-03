@@ -7,11 +7,11 @@ import LibMobileCoin
 
 final class FogReportHttpConnection: ArbitraryHttpConnection, FogReportService {
     private let client: Report_ReportAPIRestClient
-    let requester: HTTPRequester
+    let requester: RestApiRequester
 
-    init(url: FogUrl, requester: HTTPRequester? = nil, targetQueue: DispatchQueue?) {
+    init(url: FogUrl, requester: RestApiRequester, targetQueue: DispatchQueue?) {
         self.client = Report_ReportAPIRestClient()
-        self.requester = HTTPRequester(baseUrl: url.httpBasedUrl, trustRoots: [])
+        self.requester = requester
         super.init(url: url, targetQueue: targetQueue)
     }
 
@@ -26,7 +26,7 @@ final class FogReportHttpConnection: ArbitraryHttpConnection, FogReportService {
 extension FogReportHttpConnection {
     private struct GetReportsCall: HttpCallable {
         let client: Report_ReportAPIRestClient
-        let requester: HTTPRequester
+        let requester: RestApiRequester
 
         func call(
             request: Report_ReportRequest,
