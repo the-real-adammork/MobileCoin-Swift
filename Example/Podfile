@@ -31,9 +31,9 @@ target 'Example' do
   # pod 'LibMobileCoin', podspec: '../Vendor/libmobilecoin-ios-artifacts/LibMobileCoin.podspec'
   # pod 'LibMobileCoin', git: 'https://github.com/mobilecoinofficial/libmobilecoin-ios-artifacts.git'
 
-  pod 'gRPC-Swift', binary: true
-  pod 'SwiftProtobuf', binary: true
-  pod 'SwiftLint', binary: true
+  pod 'gRPC-Swift'
+  pod 'SwiftProtobuf'
+  pod 'SwiftLint'
 end
 
 post_install do |installer|
@@ -85,11 +85,17 @@ post_install do |installer|
 
   installer.pods_project.targets.each do |target|
       target.build_configurations.each do |config|
-          config.build_settings['DEBUG_INFORMATION_FORMAT'] = 'dwarf'
-          config.build_settings.delete 'IPHONEOS_DEPLOYMENT_TARGET'
+          # config.build_settings['DEBUG_INFORMATION_FORMAT'] = 'dwarf'
+          # config.build_settings.delete 'IPHONEOS_DEPLOYMENT_TARGET'
           config.build_settings['ONLY_ACTIVE_ARCH'] = 'YES'
       end
   end
+
+   installer.pods_project.targets.each do |target|
+       target.build_configurations.each do |config|
+          # config.build_settings['ARCHS[sdk=iphonesimulator*]'] =  `uname -m`
+       end
+   end
 end
 
 post_integrate do |installer|
