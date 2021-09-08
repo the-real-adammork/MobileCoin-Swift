@@ -75,7 +75,7 @@ Pod::Spec.new do |s|
     # The LibMobileCoin vendored binary doesn't include support for bitcode.
     "ENABLE_BITCODE" => "NO",
     # The LibMobileCoin vendored binary doesn't include support for Mac Catalyst.
-    "SUPPORTS_MACCATALYST" => "NO",
+    "SUPPORTS_MACCATALYST" => "YES",
     # The LibMobileCoin vendored binary doesn't include support for 32-bit
     # architectures or for arm64 iphonesimulator.
     "VALID_ARCHS[sdk=iphoneos*]" => "arm64",
