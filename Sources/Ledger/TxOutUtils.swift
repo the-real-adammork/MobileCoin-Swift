@@ -147,39 +147,40 @@ enum TxOutUtils {
         publicKey: RistrettoPublic,
         viewPrivateKey: RistrettoPrivate
     ) -> UInt64? {
-        var mcAmount = McTxOutAmount(masked_value: maskedValue)
-        return publicKey.asMcBuffer { publicKeyPtr in
-            viewPrivateKey.asMcBuffer { viewKeyBufferPtr in
-                var valueOut: UInt64 = 0
-                switch withMcError({ errorPtr in
-                    mc_tx_out_get_value(
-                        &mcAmount,
-                        publicKeyPtr,
-                        viewKeyBufferPtr,
-                        &valueOut,
-                        &errorPtr)
-                }) {
-                case .success:
-                    return valueOut
-                case .failure(let error):
-                    switch error.errorCode {
-                    case .transactionCrypto:
-                        // Indicates either `commitment`/`maskedValue`/`publicKey` values are
-                        // incongruent or `viewPrivateKey` does not own `TxOut`. However, it's
-                        // not possible to determine which, only that the provided `commitment`
-                        // doesn't match the computed commitment.
-                        return nil
-                    case .invalidInput:
-                        // Safety: This condition indicates a programming error and can only
-                        // happen if arguments to mc_tx_out_get_value are supplied incorrectly.
-                        logger.fatalError("error: \(redacting: error)")
-                    default:
-                        // Safety: mc_tx_out_get_value should not throw non-documented errors.
-                        logger.fatalError("Unhandled LibMobileCoin error: \(redacting: error)")
-                    }
-                }
-            }
-        }
+        return nil
+//        var mcAmount = McTxOutAmount(masked_value: maskedValue)
+//        return publicKey.asMcBuffer { publicKeyPtr in
+//            viewPrivateKey.asMcBuffer { viewKeyBufferPtr in
+//                var valueOut: UInt64 = 0
+//                switch withMcError({ errorPtr in
+//                    mc_tx_out_get_value(
+//                        &mcAmount,
+//                        publicKeyPtr,
+//                        viewKeyBufferPtr,
+//                        &valueOut,
+//                        &errorPtr)
+//                }) {
+//                case .success:
+//                    return valueOut
+//                case .failure(let error):
+//                    switch error.errorCode {
+//                    case .transactionCrypto:
+//                        // Indicates either `commitment`/`maskedValue`/`publicKey` values are
+//                        // incongruent or `viewPrivateKey` does not own `TxOut`. However, it's
+//                        // not possible to determine which, only that the provided `commitment`
+//                        // doesn't match the computed commitment.
+//                        return nil
+//                    case .invalidInput:
+//                        // Safety: This condition indicates a programming error and can only
+//                        // happen if arguments to mc_tx_out_get_value are supplied incorrectly.
+//                        logger.fatalError("error: \(redacting: error)")
+//                    default:
+//                        // Safety: mc_tx_out_get_value should not throw non-documented errors.
+//                        logger.fatalError("Unhandled LibMobileCoin error: \(redacting: error)")
+//                    }
+//                }
+//            }
+//        }
     }
 
     /// - Returns: `nil` when a valid `KeyImage` cannot be constructed, either because
