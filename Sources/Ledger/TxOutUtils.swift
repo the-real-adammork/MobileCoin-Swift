@@ -63,14 +63,16 @@ enum TxOutUtils {
         publicKey: RistrettoPublic,
         viewPrivateKey: RistrettoPrivate
     ) -> RistrettoPublic? {
+        return nil
+        /*
         publicKey.asMcBuffer { publicKeyBufferPtr in
             viewPrivateKey.asMcBuffer { viewPrivateKeyPtr in
                 switch Data32.make(withMcMutableBuffer: { bufferPtr, errorPtr in
-                    mc_tx_out_shared_secret(
+                    /*mc_tx_out_shared_secret(
                         publicKeyBufferPtr,
                         viewPrivateKeyPtr,
                         bufferPtr,
-                        &errorPtr)
+                        &errorPtr)*/
                 }) {
                 case .success(let bytes):
                     // Safety: It's safe to skip validation because
@@ -96,6 +98,7 @@ enum TxOutUtils {
                 }
             }
         }
+ */
     }
 
     static func subaddressSpentPublicKey(
