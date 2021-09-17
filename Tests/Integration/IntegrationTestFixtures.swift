@@ -9,7 +9,7 @@ import NIOSSL
 import XCTest
 
 enum IntegrationTestFixtures {
-    static let network: NetworkPreset = .testNet
+    static let network: NetworkPreset = .alpha
 }
 
 extension IntegrationTestFixtures {
