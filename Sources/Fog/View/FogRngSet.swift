@@ -176,7 +176,7 @@ final class FogRngSet {
             txOutSearchResults.map { ($0.searchKey, $0) },
             uniquingKeysWith: { key1, _ in key1 })
 
-        return rngSetSearchAttempt.ingestInvocationIdToRngSearchAttempt
+        let results = rngSetSearchAttempt.ingestInvocationIdToRngSearchAttempt
             .map { ingestInvocationId, rngSearchAttempt
                     -> Result<[FogView_TxOutSearchResult], ConnectionError> in
                 guard let rngTracker = ingestInvocationIdToRngTrackers[ingestInvocationId] else {
@@ -208,6 +208,14 @@ final class FogRngSet {
             }.collectResult().map {
                 $0.flatMap { $0 }
             }
+        
+        switch results {
+        case .success(let results):
+            print("Fog search results count \(results.count)")
+        default:
+            print("")
+        }
+        return results
     }
 }
 

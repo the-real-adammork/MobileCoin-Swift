@@ -36,4 +36,46 @@ enum FogViewUtils {
             return .success(txOutRecord)
         }
     }
+    
+    static func decryptTxOutRecordImproved(
+        ciphertext: Data,
+        accountKey: AccountKey
+    ) -> Result<FogView_TxOutRecord, VersionedCryptoBoxError> {
+        let defaultDecrypt = VersionedCryptoBox.decrypt(
+            ciphertext: ciphertext,
+            privateKey: accountKey.subaddressViewPrivateKey
+        )
+        
+        let changeDecrypt = VersionedCryptoBox.decrypt(
+            ciphertext: ciphertext,
+            privateKey: accountKey.changeSubaddressViewPrivateKey
+        )
+        
+        let changeResult : Result<FogView_TxOutRecord, VersionedCryptoBoxError> = changeDecrypt.flatMap { decrypted in
+            guard let txOutRecord = try? FogView_TxOutRecord(serializedData: decrypted) else {
+                return .failure(.invalidInput("FogView_TxOutRecord deserialization failed. " +
+                    "serializedData: \(redacting: decrypted.base64EncodedString())"))
+            }
+            return .success(txOutRecord)
+        }
+        
+        let defaultResult : Result<FogView_TxOutRecord, VersionedCryptoBoxError> = defaultDecrypt.flatMap { decrypted in
+            guard let txOutRecord = try? FogView_TxOutRecord(serializedData: decrypted) else {
+                return .failure(.invalidInput("FogView_TxOutRecord deserialization failed. " +
+                    "serializedData: \(redacting: decrypted.base64EncodedString())"))
+            }
+            return .success(txOutRecord)
+        }
+        
+        switch (changeResult, defaultResult) {
+        case (.failure(_), .failure(let defaultError)):
+            return .failure(defaultError)
+        case (.failure(_), .success(let defaultRecord)):
+            return .success(defaultRecord)
+        case (.success(let changeRecord), .failure(_)):
+            return .success(changeRecord)
+        case (.success(_), .success(let defaultRecord)):
+            return .success(defaultRecord)
+        }
+    }
 }

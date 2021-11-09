@@ -73,7 +73,7 @@ class MobileCoinClientPublicApiIntTests: XCTestCase {
     func updateBalance(transportProtocol: TransportProtocol) throws {
         let expect = expectation(description: "Updating account balance")
         try IntegrationTestFixtures.createMobileCoinClient(transportProtocol:transportProtocol).updateBalance {
-            guard let balance = $0.successOrFulfill(expectation: expect) else { return }
+            guard let balance = $0.successOrFulfill(expectation: expect) else { return}
 
             if let amountPicoMob = try? XCTUnwrap(balance.amountPicoMob()) {
                 print("balance: \(amountPicoMob)")
@@ -151,6 +151,18 @@ class MobileCoinClientPublicApiIntTests: XCTestCase {
     
     func testSelfPaymentBalanceChangeHTTP() throws {
         try selfPaymentBalanceChange(transportProtocol: TransportProtocol.http)
+    }
+    
+    func testPrintAllPublicAddress() throws {
+        Array(0...9).map { index in
+            try? IntegrationTestFixtures.createAccountKey(accountIndex: index)
+        }
+        .compactMap({$0})
+        .forEach { key in
+            print("key.publicAddress: \(key.publicAddress) \n")
+            print("Public Address b58 default sub address: \(Base58Coder.encode(key.publicAddress)) \n")
+            print("Public Address b58 change sub address: \(Base58Coder.encode(key.publicChangeAddress)) \n")
+        }
     }
     
     func selfPaymentBalanceChange(transportProtocol: TransportProtocol) throws {

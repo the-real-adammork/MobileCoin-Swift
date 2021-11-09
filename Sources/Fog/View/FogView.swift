@@ -54,6 +54,7 @@ final class FogView {
     ) -> Result<(newTxOuts: [KnownTxOut], nextRoundTargetBlockCount: UInt64?), ConnectionError> {
         logger.info("Processing Fog View query response...", logFunction: false)
 
+        print("query count \(queryResponse.txOutSearchResults.count)")
         return rngSet.processRngs(queryResponse: queryResponse, accountKey: accountKey).map {
             processMissedBlockRanges(queryResponse.missedBlockRanges)
 
@@ -131,7 +132,7 @@ final class FogView {
         _ searchResult: FogView_TxOutSearchResult,
         accountKey: AccountKey
     ) -> Result<FogView_TxOutRecord, ConnectionError> {
-        FogViewUtils.decryptTxOutRecord(
+        FogViewUtils.decryptTxOutRecordImproved(
             ciphertext: searchResult.ciphertext,
             accountKey: accountKey
         ).mapError { error in

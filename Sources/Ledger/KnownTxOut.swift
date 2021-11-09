@@ -8,11 +8,12 @@ struct KnownTxOut: TxOutProtocol {
     private let ledgerTxOut: LedgerTxOut
     let value: UInt64
     let keyImage: KeyImage
+    let subaddressIndex: Int
 
     init?(_ ledgerTxOut: LedgerTxOut, accountKey: AccountKey) {
         
         guard let value = ledgerTxOut.value(accountKey: accountKey),
-              let keyImage = ledgerTxOut.keyImage(accountKey: accountKey),
+              let (subaddressIndex, keyImage) = ledgerTxOut.keyImage(accountKey: accountKey),
               let commitment = TxOutUtils.reconstructCommitment(
                                                    maskedValue: ledgerTxOut.maskedValue,
                                                    publicKey: ledgerTxOut.publicKey,
@@ -25,6 +26,7 @@ struct KnownTxOut: TxOutProtocol {
         self.ledgerTxOut = ledgerTxOut
         self.value = value
         self.keyImage = keyImage
+        self.subaddressIndex = subaddressIndex
     }
 
     var commitment: Data32

@@ -18,6 +18,8 @@ public struct OwnedTxOut {
     public let receivedBlock: BlockMetadata
 
     public let spentBlock: BlockMetadata?
+    
+    public let subaddressIndex: Int
 
     init(
         _ knownTxOut: KnownTxOut,
@@ -29,6 +31,8 @@ public struct OwnedTxOut {
         self.keyImageTyped = knownTxOut.keyImage
         self.receivedBlock = receivedBlock
         self.spentBlock = spentBlock
+        self.subaddressIndex = knownTxOut.subaddressIndex
+        logger.info("Subaddress index \(knownTxOut.subaddressIndex)")
     }
 }
 

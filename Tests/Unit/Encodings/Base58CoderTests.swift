@@ -80,6 +80,7 @@ class Base58CoderTests: XCTestCase {
                     fogReportUrl: testcase.fog_report_url,
                     fogReportId: testcase.fog_report_id,
                     fogAuthoritySig: Data(testcase.fog_authority_sig)))
+                print(Base58Coder.encode(publicAddress))
                 XCTAssertEqual(Base58Coder.encode(publicAddress), testcase.b58_encoded)
             }
         })

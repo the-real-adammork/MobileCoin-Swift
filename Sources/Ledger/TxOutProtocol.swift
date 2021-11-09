@@ -46,12 +46,35 @@ extension TxOutProtocol {
 
     /// - Returns: `nil` when a valid `KeyImage` cannot be constructed, either because `accountKey`
     ///     does not own `TxOut` or because `TxOut` values are incongruent.
-    func keyImage(accountKey: AccountKey) -> KeyImage? {
-        TxOutUtils.keyImage(
+    func keyImage(accountKey: AccountKey) -> (index: Int, keyImage: KeyImage)? {
+        let defaultKeyImage = TxOutUtils.keyImage(
             targetKey: targetKey,
             publicKey: publicKey,
             viewPrivateKey: accountKey.viewPrivateKey,
             subaddressSpendPrivateKey: accountKey.subaddressSpendPrivateKey)
+        
+        let changeKeyImage = TxOutUtils.keyImage(
+            targetKey: targetKey,
+            publicKey: publicKey,
+            viewPrivateKey: accountKey.viewPrivateKey,
+            subaddressSpendPrivateKey: accountKey.changeSubaddressViewPrivateKey)
+       
+        switch (defaultKeyImage, changeKeyImage) {
+        case (nil, .some(let keyImage)):
+            print("found with change subaddress")
+            return (1, keyImage)
+        case (.some(let keyImage), nil):
+            return (0, keyImage)
+        case (.some(let keyImage), .some(_)):
+            print("found with both subaddress")
+            return (0, keyImage)
+        case (nil, nil):
+//            print("did not find")
+            return nil
+        default:
+            return nil
+        }
+//        return [defaultKeyImage, changeKeyImage].compactMap({$0}).first
     }
 }
 
