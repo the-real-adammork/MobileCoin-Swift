@@ -10,6 +10,7 @@ struct TransactionPreparer {
     private let serialQueue: DispatchQueue
     private let accountKey: AccountKey
     private let selfPaymentAddress: PublicAddress
+    private let selfChangeAddress: PublicAddress
     private let fogResolverManager: FogResolverManager
     private let mixinSelectionStrategy: MixinSelectionStrategy
     private let fogMerkleProofFetcher: FogMerkleProofFetcher
@@ -26,6 +27,7 @@ struct TransactionPreparer {
             target: targetQueue)
         self.accountKey = accountKey
         self.selfPaymentAddress = accountKey.publicAddress
+        self.selfChangeAddress = accountKey.publicChangeAddress
         self.fogResolverManager = fogResolverManager
         self.mixinSelectionStrategy = mixinSelectionStrategy
         self.fogMerkleProofFetcher = FogMerkleProofFetcher(

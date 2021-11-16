@@ -47,6 +47,7 @@ final class Account {
         let txOutValues = allTxOutTrackers
             .filter { $0.receivedAndUnspent(asOfBlockCount: blockCount) }
             .map { $0.knownTxOut.value }
+        print("all txout values \(txOutValues)")
         return Balance(values: txOutValues, blockCount: blockCount)
     }
 
