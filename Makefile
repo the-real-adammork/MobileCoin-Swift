@@ -96,6 +96,13 @@ autocorrect:
 swiftlint:
 	@PATH="./Example/Pods/SwiftLint:$$PATH" swiftlint
 
+# Enclave
+
+.PHONY: enclaver
+enclaver:
+	$(shell git submodule update --init --recursive && \
+		  ./Vendor/libmobilecoin-ios-artifacts/Vendor/mobilecoin/tools/enclaver.sh "prod.mobilecoin.com")
+
 # Maintenance
 
 .PHONY: upgrade-deps
