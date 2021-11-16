@@ -121,8 +121,10 @@ class MobileCoinClientPublicApiIntTests: XCTestCase {
     }
     
     func submitTransaction(transportProtocol: TransportProtocol) throws {
-        let recipient = try IntegrationTestFixtures.createPublicAddress(accountIndex: 0)
+        let recipient = try IntegrationTestFixtures.createPublicAddress(accountIndex: 1)
 
+        // 19853999996492
+        // 19843999996392
         let expect = expectation(description: "Submitting transaction")
         try IntegrationTestFixtures.createMobileCoinClientWithBalance(expectation: expect, transportProtocol: transportProtocol)
         { client in
