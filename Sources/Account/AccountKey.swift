@@ -102,6 +102,22 @@ public struct AccountKey {
         ).subaddressSpendPrivateKey
     }
     
+    var changeSubaddressSpendPrivateKey: RistrettoPrivate {
+        AccountKeyUtils.subaddressPrivateKeys(
+            viewPrivateKey: viewPrivateKey,
+            spendPrivateKey: spendPrivateKey,
+            subaddressIndex: McConstants.DEFAULT_CHANGE_SUBADDRESS_INDEX
+        ).subaddressSpendPrivateKey
+    }
+    
+    func subaddressSpendPrivateKey(index: Int) -> RistrettoPrivate? {
+        let sspk = [subaddressSpendPrivateKey, changeSubaddressSpendPrivateKey]
+        guard index < sspk.count else {
+            return nil
+        }
+        return sspk[index]
+    }
+    
     func subaddressIndex(forSubaddressPublicSpendKey subaddressPublicSpendKey: RistrettoPublic) -> Int? {
         ([McConstants.DEFAULT_SUBADDRESS_INDEX, McConstants.DEFAULT_CHANGE_SUBADDRESS_INDEX].map {
             AccountKeyUtils.publicAddressPublicKeys(

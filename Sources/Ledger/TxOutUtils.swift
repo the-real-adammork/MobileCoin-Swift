@@ -214,6 +214,7 @@ enum TxOutUtils {
                                 // `TxOut`. However, it's not possible to determine which, only that
                                 // the provided `targetKey` doesn't match the computed target key
                                 // (aka onetime public key).
+                                //print("Indicates either `targetKey`/`publicKey` values are incongruent")
                                 return nil
                             case .invalidInput:
                                 // Safety: This condition indicates a programming error and can only

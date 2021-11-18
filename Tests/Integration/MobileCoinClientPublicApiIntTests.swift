@@ -112,6 +112,38 @@ class MobileCoinClientPublicApiIntTests: XCTestCase {
         waitForExpectations(timeout: 20)
     }
 
+    func testPrintBalances(_ range: ClosedRange<Int>) throws {
+    // 237
+        try Array(range).forEach { index in
+            let accountKey = try  IntegrationTestFixtures.createAccountKey(accountIndex: index)
+            let client = try IntegrationTestFixtures.createMobileCoinClient(accountKey: accountKey, transportProtocol: TransportProtocol.grpc)
+            let expect = expectation(description: "Updating account balance for account index \(index)")
+            client.updateBalance {
+                guard $0.successOrFulfill(expectation: expect) != nil else { return }
+
+                if let amountPicoMob = try? XCTUnwrap(client.balance.amountPicoMob()) {
+                    print("balance index \(index): \(amountPicoMob) , default sub address \(Base58Coder.encode(accountKey.publicAddress))\n")
+//                    XCTAssertGreaterThan(amountPicoMob, 0)
+                }
+
+                expect.fulfill()
+            }
+            waitForExpectations(timeout: 20)
+        }
+    }
+    
+    func testPrintSomeBalances() throws {
+        try testPrintBalance(for: 0)
+    }
+    
+    func testPrintBalance(for accountIndex: Int) throws {
+        try testPrintBalances(accountIndex...accountIndex)
+    }
+    
+    func testPrintAllBalances() throws {
+        try testPrintBalances(0...9)
+    }
+    
     func testSubmitTransactionGRPC() throws {
         try submitTransaction(transportProtocol: TransportProtocol.grpc)
     }
@@ -121,10 +153,8 @@ class MobileCoinClientPublicApiIntTests: XCTestCase {
     }
     
     func submitTransaction(transportProtocol: TransportProtocol) throws {
-        let recipient = try IntegrationTestFixtures.createPublicAddress(accountIndex: 1)
+        let recipient = try IntegrationTestFixtures.createPublicAddress(accountIndex: 2)
 
-        // 19853999996492
-        // 19843999996392
         let expect = expectation(description: "Submitting transaction")
         try IntegrationTestFixtures.createMobileCoinClientWithBalance(expectation: expect, transportProtocol: transportProtocol)
         { client in
@@ -139,8 +169,46 @@ class MobileCoinClientPublicApiIntTests: XCTestCase {
                 client.submitTransaction(transaction) {
                     guard $0.successOrFulfill(expectation: expect) != nil else { return }
 
-                    print("Transaction submission successful")
-                    expect.fulfill()
+                    var numChecksRemaining = 5
+
+                    func checkStatus() {
+                        numChecksRemaining -= 1
+                        print("Updating balance...")
+                        client.updateBalance {
+                            guard let balance = $0.successOrFulfill(expectation: expect) else { return }
+                            print("Balance: \(balance)")
+
+                            print("Checking status...")
+                            client.status(of: transaction) {
+                                guard let status = $0.successOrFulfill(expectation: expect) else { return }
+                                print("Transaction status: \(status)")
+
+                                switch status {
+                                case .unknown:
+                                    guard numChecksRemaining > 0 else {
+                                        XCTFail("Failed to resolve transaction status check")
+                                        expect.fulfill()
+                                        return
+                                    }
+
+                                    Thread.sleep(forTimeInterval: 2)
+                                    checkStatus()
+                                    return
+                                case .accepted(block: let block):
+                                    print("Block index: \(block.index)")
+                                    XCTAssertGreaterThan(block.index, 0)
+
+                                    if let timestamp = block.timestamp {
+                                        print("Block timestamp: \(timestamp)")
+                                    }
+                                case .failed:
+                                    XCTFail("Transaction status check: Transaction failed")
+                                }
+                                expect.fulfill()
+                            }
+                        }
+                    }
+                    checkStatus()
                 }
             }
         }

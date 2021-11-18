@@ -128,7 +128,8 @@ struct TransactionPreparer {
                         accountKey: self.accountKey,
                         to: recipient,
                         amount: amount,
-                        changeAddress: self.selfPaymentAddress,
+                        changeAddress: self.selfChangeAddress,
+//                        changeAddress: self.selfPaymentAddress,
                         fee: fee,
                         tombstoneBlockIndex: tombstoneBlockIndex,
                         fogResolver: fogResolver

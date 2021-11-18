@@ -51,6 +51,10 @@ enum FogViewUtils {
             privateKey: accountKey.changeSubaddressViewPrivateKey
         )
         
+        if let result = try? changeDecrypt.get() {
+            print("change decrypted")
+        }
+        
         let changeResult : Result<FogView_TxOutRecord, VersionedCryptoBoxError> = changeDecrypt.flatMap { decrypted in
             guard let txOutRecord = try? FogView_TxOutRecord(serializedData: decrypted) else {
                 return .failure(.invalidInput("FogView_TxOutRecord deserialization failed. " +

@@ -147,24 +147,33 @@ final class TransactionBuilder {
         }
 
         // Change output
-        if let changeOutput = changeOutput {
-            builder.addChangeOutput(
-                publicAddress: changeOutput.recipient,
-                accountKey: accountKey,
-                amount: changeOutput.amount.value,
-                rng: rng,
-                rngContext: rngContext
-            ).map { $0.receipt }
-        }
-        
-        let outputResults = outputs.map { recipient, amount in
+        var tx1 : TxOut?
+        var tx2 : TxOut?
+        var outputResults = outputs.map { recipient, amount in
             builder.addOutput(
                 publicAddress: recipient,
                 amount: amount.value,
                 rng: rng,
                 rngContext: rngContext
-            ).map { $0.receipt }
+            ).map { result -> Receipt in
+                tx1 = result.txOut
+                return result.receipt
+            }
         }
+        
+        if let changeOutput = changeOutput {
+            outputResults.append(builder.addChangeOutput(
+                publicAddress: changeOutput.recipient,
+                accountKey: accountKey,
+                amount: changeOutput.amount.value,
+                rng: rng,
+                rngContext: rngContext
+            ).map { result -> Receipt in
+                tx2 = result.txOut
+                return result.receipt
+            })
+        }
+        
         return outputResults.collectResult().flatMap { receipts in
             builder.build(rng: rng, rngContext: rngContext).map { transaction in
                 (transaction, receipts)
@@ -297,10 +306,13 @@ final class TransactionBuilder {
     private func addInput(preparedTxInput: PreparedTxInput, accountKey: AccountKey)
         -> Result<(), TransactionBuilderError>
     {
-        addInput(
-            preparedTxInput: preparedTxInput,
-            viewPrivateKey: accountKey.viewPrivateKey,
-            subaddressSpendPrivateKey: accountKey.subaddressSpendPrivateKey)
+        guard let subaddressSpendPrivateKey = accountKey.subaddressSpendPrivateKey(index: preparedTxInput.knownTxOut.subaddressIndex) else {
+            return .failure(TransactionBuilderError.invalidInput("Subaddress index out of bounds"))
+        }
+        return addInput(
+                preparedTxInput: preparedTxInput,
+                viewPrivateKey: accountKey.viewPrivateKey,
+                subaddressSpendPrivateKey: subaddressSpendPrivateKey)
     }
 
     private func addInput(
@@ -404,6 +416,7 @@ final class TransactionBuilder {
                 withMcRngCallback(rng: rng, rngContext: rngContext) { rngCallbackPtr in
                     confirmationNumberData.asMcMutableBuffer { confirmationNumberPtr in
                         Data.make(withMcDataBytes: { errorPtr in
+//                            mc_transaction_builder_add_change_output(accountKeyPtr, ptr, amount, rngCallbackPtr, confirmationNumberPtr, &errorPtr)
                             mc_transaction_builder_add_change_output(
                                 accountKeyPtr,
                                 ptr,

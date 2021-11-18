@@ -57,7 +57,7 @@ extension TxOutProtocol {
             targetKey: targetKey,
             publicKey: publicKey,
             viewPrivateKey: accountKey.viewPrivateKey,
-            subaddressSpendPrivateKey: accountKey.changeSubaddressViewPrivateKey)
+            subaddressSpendPrivateKey: accountKey.changeSubaddressSpendPrivateKey)
        
         switch (defaultKeyImage, changeKeyImage) {
         case (nil, .some(let keyImage)):

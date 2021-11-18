@@ -12,16 +12,23 @@ struct KnownTxOut: TxOutProtocol {
 
     init?(_ ledgerTxOut: LedgerTxOut, accountKey: AccountKey) {
         
-        guard let value = ledgerTxOut.value(accountKey: accountKey),
-              let (subaddressIndex, keyImage) = ledgerTxOut.keyImage(accountKey: accountKey),
-              let commitment = TxOutUtils.reconstructCommitment(
-                                                   maskedValue: ledgerTxOut.maskedValue,
-                                                   publicKey: ledgerTxOut.publicKey,
-                                                   viewPrivateKey:accountKey.viewPrivateKey)
-        else {
+        guard let value = ledgerTxOut.value(accountKey: accountKey) else {
+            print("\n\n unable to create value from KnownTxOut \n\n")
             return nil
         }
-        
+        guard let (subaddressIndex, keyImage) = ledgerTxOut.keyImage(accountKey: accountKey) else {
+            print("\n\n unable to process key image from KnownTxOut \n\n")
+            return nil
+            
+        }
+        guard let commitment = TxOutUtils.reconstructCommitment(
+                                                   maskedValue: ledgerTxOut.maskedValue,
+                                                   publicKey: ledgerTxOut.publicKey,
+                viewPrivateKey:accountKey.viewPrivateKey) else {
+            print("\n\n unable to create KnownTxOut \n\n")
+            return nil
+        }
+
         self.commitment = commitment
         self.ledgerTxOut = ledgerTxOut
         self.value = value

@@ -78,6 +78,7 @@ final class FogView {
                 LedgerTxOut.make(txOutRecord: txOutRecord, viewKey: accountKey.viewPrivateKey)
             }.collectResult()
         }.map { txOuts in
+            print("ledger tx out count: \(txOuts.count)")
             let foundTxOuts = Self.ownedTxOuts(validating: txOuts, accountKey: accountKey)
 
             // After the first call we know the current number of blocks processed by the fog
