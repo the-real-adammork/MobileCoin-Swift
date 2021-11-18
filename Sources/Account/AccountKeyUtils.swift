@@ -94,7 +94,7 @@ enum AccountKeyUtils {
 }
 
 extension McAccountKey {
-    fileprivate static func withUnsafePointer<T>(
+    static func withUnsafePointer<T>(
         viewPrivateKey: RistrettoPrivate,
         spendPrivateKey: RistrettoPrivate,
         reportUrl: String,
@@ -118,8 +118,10 @@ extension McAccountKey {
             }
         }
     }
+}
 
-    fileprivate static func withUnsafePointer<T>(
+extension McAccountKey {
+    static func withUnsafePointer<T>(
         viewPrivateKey: RistrettoPrivate,
         spendPrivateKey: RistrettoPrivate,
         body: (UnsafePointer<McAccountKey>) throws -> T

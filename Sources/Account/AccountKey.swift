@@ -33,8 +33,10 @@ public struct AccountKey {
     let spendPrivateKey: RistrettoPrivate
     let fogInfo: FogInfo?
     let subaddressIndex: UInt64
+    let changeSubaddressIndex: UInt64 = McConstants.DEFAULT_CHANGE_SUBADDRESS_INDEX
 
     public let publicAddress: PublicAddress
+    public let publicChangeAddress: PublicAddress
 
     init(
         viewPrivateKey: RistrettoPrivate,
@@ -51,6 +53,11 @@ public struct AccountKey {
             spendPrivateKey: spendPrivateKey,
             accountKeyFogInfo: fogInfo,
             subaddressIndex: subaddressIndex)
+        self.publicChangeAddress = PublicAddress(
+            viewPrivateKey: viewPrivateKey,
+            spendPrivateKey: spendPrivateKey,
+            accountKeyFogInfo: fogInfo,
+            subaddressIndex: changeSubaddressIndex)
     }
 
     /// - Returns: `nil` when the input is not deserializable.
@@ -72,20 +79,60 @@ public struct AccountKey {
     var fogReportId: String? { fogInfo?.reportId }
     var fogAuthoritySpki: Data? { fogInfo?.authoritySpki }
 
-    var subaddressViewPrivateKey: RistrettoPrivate {
+    private typealias SubaddressPrivateKey = (subaddressViewPrivateKey: RistrettoPrivate, subaddressSpendPrivateKey: RistrettoPrivate)
+    
+    private var subaddressPrivateKey : SubaddressPrivateKey {
         AccountKeyUtils.subaddressPrivateKeys(
             viewPrivateKey: viewPrivateKey,
             spendPrivateKey: spendPrivateKey,
             subaddressIndex: subaddressIndex
-        ).subaddressViewPrivateKey
+        )
+    }
+    
+    private var changeSubaddressPrivateKey : SubaddressPrivateKey {
+        AccountKeyUtils.subaddressPrivateKeys(
+            viewPrivateKey: viewPrivateKey,
+            spendPrivateKey: spendPrivateKey,
+            subaddressIndex: McConstants.DEFAULT_CHANGE_SUBADDRESS_INDEX
+        )
+    }
+    
+    var subaddressViewPrivateKey: RistrettoPrivate {
+        subaddressPrivateKey.subaddressViewPrivateKey
     }
 
     var subaddressSpendPrivateKey: RistrettoPrivate {
-        AccountKeyUtils.subaddressPrivateKeys(
-            viewPrivateKey: viewPrivateKey,
-            spendPrivateKey: spendPrivateKey,
-            subaddressIndex: subaddressIndex
-        ).subaddressSpendPrivateKey
+        subaddressPrivateKey.subaddressSpendPrivateKey
+    }
+    
+    var changeSubaddressViewPrivateKey: RistrettoPrivate {
+        changeSubaddressPrivateKey.subaddressViewPrivateKey
+    }
+
+    var changeSubaddressSpendPrivateKey: RistrettoPrivate {
+        changeSubaddressPrivateKey.subaddressSpendPrivateKey
+    }
+    
+    func subaddressSpendPrivateKey(index: UInt64) -> RistrettoPrivate? {
+        switch index {
+        case subaddressIndex:
+            return subaddressSpendPrivateKey
+        case changeSubaddressIndex:
+            return changeSubaddressSpendPrivateKey
+        default:
+            return nil
+        }
+    }
+    
+    func subaddressViewPrivateKey(index: UInt64) -> RistrettoPrivate? {
+        switch index {
+        case subaddressIndex:
+            return subaddressViewPrivateKey
+        case changeSubaddressIndex:
+            return changeSubaddressViewPrivateKey
+        default:
+            return nil
+        }
     }
 }
 
