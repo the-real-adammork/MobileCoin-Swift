@@ -47,6 +47,12 @@ final class Account {
         let txOutValues = allTxOutTrackers
             .filter { $0.receivedAndUnspent(asOfBlockCount: blockCount) }
             .map { $0.knownTxOut.value }
+        
+        let txOutValues2 = allTxOutTrackers
+            .filter { $0.receivedAndUnspent(asOfBlockCount: blockCount) }
+            .map { ($0.knownTxOut.value, $0.knownTxOut.subaddressIndex) }
+        
+        print(txOutValues2)
         return Balance(values: txOutValues, blockCount: blockCount)
     }
 
