@@ -9,11 +9,15 @@ protocol PossibleNIOSSLCertificate {
     
     init?(trustRootBytes: [Data])
     
-    func trustRoots() -> Result<Any, InvalidInputError>
+    static func trustRoots() -> Result<Any, InvalidInputError>
 }
 
 extension PossibleNIOSSLCertificate {
-    func trustRoots() -> Result<Any, InvalidInputError> {
+    init?(trustRootBytes: [Data]) {
+        return nil
+    }
+    
+    static func trustRoots() -> Result<Any, InvalidInputError> {
         return .failure(InvalidInputError("Not implemented"))
     }
 }
