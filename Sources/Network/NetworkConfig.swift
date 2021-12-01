@@ -5,6 +5,15 @@
 import Foundation
 import NIOSSL
 
+/**
+ 
+ TODO
+ 
+ - Create AttestedConnection protocol with default implementations for all re-attest logic, remove GRPC specific code and encapsulate into factory/DI
+ - Go through each "XXYYConnection" concrete class and delegate Connection<Y,Y> creation to factory pattern or similar
+ - Move PossibleNIOSSLCertificate change into all protocols and shared code
+ - Move GrpcChannelManager() into a DI call on TransportProtocol option ? or nil and set only from Grpc init code ?
+ */
 struct NetworkConfig {
     static func make(consensusUrl: String, fogUrl: String, attestation: AttestationConfig, transportProtocol: TransportProtocol = .grpc)
         -> Result<NetworkConfig, InvalidInputError>
