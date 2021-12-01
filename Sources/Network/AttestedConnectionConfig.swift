@@ -3,32 +3,11 @@
 //
 
 import Foundation
-import NIOSSL
 
 protocol AttestedConnectionConfigProtocol: ConnectionConfigProtocol {
+    associatedtype Url:MobileCoinUrlProtocol
     var attestation: Attestation { get }
-}
-
-struct AttestedConnectionConfig<Url: MobileCoinUrlProtocol>: AttestedConnectionConfigProtocol {
-    let urlTyped: Url
-    let transportProtocolOption: TransportProtocol.Option
-    let attestation: Attestation
-    let trustRoots: [NIOSSLCertificate]?
-    let authorization: BasicCredentials?
-
-    init(
-        url: Url,
-        transportProtocolOption: TransportProtocol.Option,
-        attestation: Attestation,
-        trustRoots: [NIOSSLCertificate]?,
-        authorization: BasicCredentials?
-    ) {
-        self.urlTyped = url
-        self.transportProtocolOption = transportProtocolOption
-        self.attestation = attestation
-        self.trustRoots = trustRoots
-        self.authorization = authorization
-    }
-
-    var url: MobileCoinUrlProtocol { urlTyped }
+    var urlTyped: Url { get }
+    var transportProtocolOption: TransportProtocol.Option { get }
+    var authorization: BasicCredentials? { get }
 }

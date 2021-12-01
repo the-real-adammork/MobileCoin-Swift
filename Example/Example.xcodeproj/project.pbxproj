@@ -12,6 +12,7 @@
 		270686962474C4DA00B82C57 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 270686952474C4DA00B82C57 /* Preview Assets.xcassets */; };
 		270686992474C4DA00B82C57 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 270686972474C4DA00B82C57 /* LaunchScreen.storyboard */; };
 		27A1FABF24E8B89C001A0614 /* Performance Tests.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = 27A1FABE24E8B89C001A0614 /* Performance Tests.xctestplan */; };
+		660F00B02758357800922FF6 /* GrpcAttestedConnectionConfigProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 660F00AF2758357800922FF6 /* GrpcAttestedConnectionConfigProtocol.swift */; };
 		F9800F2C17E6D5B2B021EB8D /* Pods_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C0382FE8E8E7AAAC02CECA3 /* Pods_Example.framework */; };
 /* End PBXBuildFile section */
 
@@ -28,6 +29,7 @@
 		27A39C3D24C2622600B44786 /* Unit Tests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Unit Tests.xctestplan"; sourceTree = "<group>"; };
 		3AF40DB60A0ADA2CB879AE38 /* Pods-Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Example.release.xcconfig"; path = "Target Support Files/Pods-Example/Pods-Example.release.xcconfig"; sourceTree = "<group>"; };
 		4C0382FE8E8E7AAAC02CECA3 /* Pods_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		660F00AF2758357800922FF6 /* GrpcAttestedConnectionConfigProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GrpcAttestedConnectionConfigProtocol.swift; path = ../Sources/Network/GRPC/GrpcAttestedConnectionConfigProtocol.swift; sourceTree = "<group>"; };
 		FC106CAA4E993C2D6301C5CA /* Pods-Example.testable release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Example.testable release.xcconfig"; path = "Target Support Files/Pods-Example/Pods-Example.testable release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -46,6 +48,7 @@
 		270686802474C4D800B82C57 = {
 			isa = PBXGroup;
 			children = (
+				660F00AF2758357800922FF6 /* GrpcAttestedConnectionConfigProtocol.swift */,
 				2706868B2474C4D800B82C57 /* Example */,
 				27A39C3B24C2622600B44786 /* TestPlans */,
 				2706868A2474C4D800B82C57 /* Products */,
@@ -227,6 +230,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2706868D2474C4D800B82C57 /* AppDelegate.swift in Sources */,
+				660F00B02758357800922FF6 /* GrpcAttestedConnectionConfigProtocol.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

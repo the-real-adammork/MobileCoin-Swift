@@ -4,7 +4,7 @@
 
 import Foundation
 
-class EmptyNIOSSLCertificateValidator {
+class EmptyNIOSSLCertificateValidator : NIOSSLCertificateValidator {
     func validate(_ possibleCertificateData: [Data]) -> Result<PossibleNIOSSLCertificate, InvalidInputError> {
         return .failure(InvalidInputError("NIOSSLCertificates not supported with HTTP"))
     }

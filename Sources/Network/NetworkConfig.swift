@@ -23,8 +23,8 @@ struct NetworkConfig {
 
     var transportProtocol: TransportProtocol = .grpc
 
-    var consensusTrustRootsBytes: [Data]?
-    var fogTrustRootsBytes: [Data]?
+    var possibleConsensusTrustRoots: PossibleNIOSSLCertificate
+    var possibleFogTrustRoots: PossibleNIOSSLCertificate
 
     var consensusAuthorization: BasicCredentials?
     var fogUserAuthorization: BasicCredentials?
@@ -35,6 +35,7 @@ struct NetworkConfig {
         self.consensusUrl = consensusUrl
         self.fogUrl = fogUrl
         self.attestation = attestation
+        self.transportProtocol = transportProtocol
     }
 
     var consensus: AttestedConnectionConfig<ConsensusUrl> {
@@ -98,6 +99,18 @@ struct NetworkConfig {
     }
 
     var fogReportAttestation: Attestation { attestation.fogReport }
+    
+    public func setConsensusTrustRoots(_ trustRoots: [Data])
+        -> Result<(), InvalidInputError>
+    {
+        switch transportProtocol.certificateValidator.validate(trustRoots) {
+        case .success(let certificate):
+            self.consensusTrustRoots = certificate
+            return .success(())
+        case .failure(let error):
+            return .failure(error)
+        }
+    }
 }
 
 extension NetworkConfig {
@@ -108,4 +121,7 @@ extension NetworkConfig {
         let fogMerkleProof: Attestation
         let fogReport: Attestation
     }
+}
+
+extension NetworkConfig {
 }
