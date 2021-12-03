@@ -16,13 +16,13 @@ struct GrpcAttestedConnectionConfig<Url: MobileCoinUrlProtocol>: AttestedConnect
         url: Url,
         transportProtocolOption: TransportProtocol.Option,
         attestation: Attestation,
-        trustRoots: [NIOSSLCertificate]?,
+        possibleTrustRoots: PossibleNIOSSLCertificate?,
         authorization: BasicCredentials?
     ) {
         self.urlTyped = url
         self.transportProtocolOption = transportProtocolOption
         self.attestation = attestation
-        self.trustRoots = trustRoots
+        self.trustRoots = (possibleTrustRoots as? WrappedNIOSSLCertificate)?.trustRoots
         self.authorization = authorization
     }
 
