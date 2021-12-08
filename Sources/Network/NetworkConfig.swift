@@ -3,7 +3,6 @@
 //
 
 import Foundation
-import NIOSSL
 
 /**
  
@@ -52,7 +51,7 @@ struct NetworkConfig {
             url: consensusUrl,
             transportProtocolOption: transportProtocol.option,
             attestation: attestation.consensus,
-            trustRoots: consensusTrustRoots,
+            trustRoots: possibleConsensusTrustRoots,
             authorization: consensusAuthorization)
     }
 
@@ -60,7 +59,7 @@ struct NetworkConfig {
         ConnectionConfig(
             url: consensusUrl,
             transportProtocolOption: transportProtocol.option,
-            trustRoots: consensusTrustRoots,
+            trustRoots: possibleConsensusTrustRoots,
             authorization: consensusAuthorization)
     }
 
@@ -69,7 +68,7 @@ struct NetworkConfig {
             url: fogUrl,
             transportProtocolOption: transportProtocol.option,
             attestation: attestation.fogView,
-            trustRoots: fogTrustRoots,
+            trustRoots: possibleFogTrustRoots,
             authorization: fogUserAuthorization)
     }
 
@@ -87,7 +86,7 @@ struct NetworkConfig {
             url: fogUrl,
             transportProtocolOption: transportProtocol.option,
             attestation: attestation.fogKeyImage,
-            trustRoots: fogTrustRoots,
+            trustRoots: possibleFogTrustRoots,
             authorization: fogUserAuthorization)
     }
 
@@ -95,7 +94,7 @@ struct NetworkConfig {
         ConnectionConfig(
             url: fogUrl,
             transportProtocolOption: transportProtocol.option,
-            trustRoots: fogTrustRoots,
+            trustRoots: possibleFogTrustRoots,
             authorization: fogUserAuthorization)
     }
 
@@ -103,7 +102,7 @@ struct NetworkConfig {
         ConnectionConfig(
             url: fogUrl,
             transportProtocolOption: transportProtocol.option,
-            trustRoots: fogTrustRoots,
+            trustRoots: possibleFogTrustRoots,
             authorization: fogUserAuthorization)
     }
 
@@ -114,7 +113,7 @@ struct NetworkConfig {
     {
         switch transportProtocol.certificateValidator.validate(trustRoots) {
         case .success(let certificate):
-            self.consensusTrustRoots = certificate
+            self.possibleConsensusTrustRoots = certificate
             return .success(())
         case .failure(let error):
             return .failure(error)

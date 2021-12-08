@@ -7,7 +7,12 @@ import GRPC
 import NIO
 import NIOHPACK
 
-struct UnaryCallResult<ResponsePayload> {
+protocol ProtocolUnaryCallResult {
+    associatedtype ResponsePayload
+    var response: ResponsePayload? { get }
+}
+
+struct UnaryCallResult<ResponsePayload> : ProtocolUnaryCallResult {
     let status: GRPCStatus
     let initialMetadata: HPACKHeaders?
     let response: ResponsePayload?
