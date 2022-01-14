@@ -275,7 +275,7 @@ class MobileCoinClientPublicApiIntTests: XCTestCase {
             }
             checkBalance()
         }
-        waitForExpectations(timeout: 20)
+        waitForExpectations(timeout: 40)
     }
 
     func testTransactionStatus() throws {
