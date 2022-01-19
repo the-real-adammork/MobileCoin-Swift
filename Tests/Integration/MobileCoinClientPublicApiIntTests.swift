@@ -353,7 +353,7 @@ class MobileCoinClientPublicApiIntTests: XCTestCase {
             }
             checkStatus()
         }
-        waitForExpectations(timeout: 20)
+        waitForExpectations(timeout: 40)
     }
 
     func testReceiptStatus() throws {
