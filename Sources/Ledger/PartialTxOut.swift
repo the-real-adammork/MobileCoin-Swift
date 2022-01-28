@@ -51,6 +51,14 @@ extension PartialTxOut {
             return nil
         }
 
+        let computedCrc32 = Checksum.crc32(commitment.foundationData.bytes)
+        let sentCrc32 = txOutRecord.txOutAmountCommitmentDataCrc32
+        let sentCommitmentCrc32 = Checksum.crc32(txOutRecord.txOutAmountCommitmentData.bytes)
+        if computedCrc32 == sentCrc32 || computedCrc32 == sentCommitmentCrc32 {
+            logger.debug("commitment data equal")
+        } else {
+            logger.debug("commitment data NOT EQUAL")
+        }
         self.init(
             commitment: commitment,
             maskedValue: txOutRecord.txOutAmountMaskedValue,
