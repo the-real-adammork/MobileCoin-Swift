@@ -18,6 +18,10 @@ struct Data32 {
     init() {
         self.data = Data(count: 32)
     }
+    
+    public var foundationData: Data {
+        return data
+    }
 }
 
 extension Data32: MutableDataImpl {
