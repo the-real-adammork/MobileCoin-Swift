@@ -41,13 +41,13 @@ final class AttestationVerifier {
     }
 }
 
-extension AttestationVerifier: CustomStringConvertible {
-    var description: String {
-        String(mcString: withMcInfallibleReturningOptional {
-            mc_verifier_debug(ptr)
-        })
-    }
-}
+/*extension AttestationVerifier: CustomStringConvertible {*/
+    /*var description: String {*/
+        /*String(mcString: withMcInfallibleReturningOptional {*/
+            /*mc_verifier_debug(ptr)*/
+        /*})*/
+    /*}*/
+/*}*/
 
 private final class MrEnclaveVerifier {
     private let ptr: OpaquePointer

@@ -208,8 +208,8 @@ private final class FfiAttestAke {
         -> Result<(), AttestAkeError>
     {
         let authResponseDataBase64 = authResponseData.base64EncodedString()
-        print("authResponseData base64: \(authResponseDataBase64)")
-        print("attestationVerifier base64: \(attestationVerifier.description)")
+//        print("authResponseData base64: \(authResponseDataBase64)")
+//        print("attestationVerifier base64: \(attestationVerifier.description)")
 
 //        let x = attestationVerifier.
         return authResponseData.asMcBuffer { bytesPtr in

@@ -111,6 +111,10 @@ struct TransactionSubmitter {
         case .UNRECOGNIZED(let resultCode):
             return .failure(.connectionError(.invalidServerResponse(
                 "Consensus.proposeTx returned unrecognized result: \(resultCode)")))
+        case .unknownMaskedAmountVersion, .inputRulePartialFill, .inputRuleInvalidAmountSharedSecret,
+                .inputRuleTxOutConversion, .inputRuleAmount, .ledgerTxOutIndexOutOfBounds,
+                .feeMapDigestMismatch:
+            return .failure(.connectionError(.invalidServerResponse("New error TEMP")))
         }
     }
 }
